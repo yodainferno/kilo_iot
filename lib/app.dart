@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kilo_iot/presentation/components/bottom_navigation.dart' show BottomNavigation;
+import 'package:kilo_iot/presentation/components/bottom_navigation.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -10,7 +10,7 @@ class App extends StatelessWidget {
       theme: ThemeData(
         canvasColor: Colors.white,
       ),
-      home: BottomNavigation(),
+      home: const BottomNavigation(),
     );
   }
 }

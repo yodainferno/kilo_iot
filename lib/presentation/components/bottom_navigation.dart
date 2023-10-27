@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kilo_iot/state.dart' show NavigationPagesImpl;
+import 'package:kilo_iot/navigation_pages_state.dart';
+import 'package:kilo_iot/navigation_pages.dart';
+import 'package:provider/provider.dart';
 
-final navigationObject = NavigationPagesImpl();
+final navigationPages = NavigationPages();
 
-class BottomNavigation extends ConsumerWidget {
+class BottomNavigation extends StatelessWidget {
+  const BottomNavigation({super.key});
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final provider = navigationObject.getProvider(ref);
-    final currentPage = ref.watch(provider);
-
+  Widget build(BuildContext context) {
+    final PagesState pagesState = Provider.of<PagesState>(context, listen: true);
 
     return Scaffold(
-      body: navigationObject.pages[currentPage] ?? Container(),
+      body: navigationPages.getPage(pagesState.page),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         showSelectedLabels: false,
@@ -23,9 +24,9 @@ class BottomNavigation extends ConsumerWidget {
         unselectedItemColor: Colors.grey[500],
 
         onTap: (index) {
-          ref.read(provider.notifier).state = navigationObject.pages.keys.toList()[index];
+          pagesState.page = navigationPages.keys[index];
         },
-        currentIndex: getCurrentPageIndex(ref),
+        currentIndex: getCurrentPageIndex(pagesState.page),
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -48,12 +49,10 @@ class BottomNavigation extends ConsumerWidget {
     );
   }
 
-  int getCurrentPageIndex(WidgetRef ref) {
-    final provider = navigationObject.getProvider(ref);
-    final currentPage = ref.read(provider.notifier).state;
-
-    return navigationObject.pages.keys.toList().indexWhere(
+  int getCurrentPageIndex(String currentPage) {
+    final index = navigationPages.keys.indexWhere(
       (item) => item == currentPage
     );
+    return index < 0 ? 0 : index;
   }
 }
