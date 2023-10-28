@@ -19,9 +19,9 @@ class BottomNavigation extends StatelessWidget {
         showSelectedLabels: false,
         showUnselectedLabels: false,
         //
-        backgroundColor: Colors.grey[900],
-        selectedItemColor: Colors.limeAccent[400],
-        unselectedItemColor: Colors.grey[500],
+        // backgroundColor: Color.fromARGB(255, 40, 51, 49),
+        // selectedItemColor: Color.fromARGB(255, 52, 250, 207),
+        // unselectedItemColor: Color.fromARGB(255, 76, 125, 114),
 
         onTap: (index) {
           navigationStore.page = navigationPages.keys[index];

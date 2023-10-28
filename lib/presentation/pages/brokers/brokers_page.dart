@@ -7,7 +7,14 @@ class BrokersPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('Brokers')),
+        appBar: AppBar(
+          title: const Text('Brokers'),
+          actions: [
+            IconButton(onPressed: () {
+              Navigator.pushNamed(context, '/brokers/new');
+            }, icon: const Icon(Icons.add))
+          ],
+        ),
         body: SingleChildScrollView(child: buildBody(context)));
   }
 
