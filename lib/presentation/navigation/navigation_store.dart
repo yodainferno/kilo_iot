@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class PagesState extends ChangeNotifier {
+class NavigationStore extends ChangeNotifier {
   String _page = '';
   String get page => _page;
 

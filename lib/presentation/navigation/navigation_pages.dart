@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:kilo_iot/presentation/feed/feed_page.dart';
-import 'package:kilo_iot/presentation/devices/devices_page.dart';
-import 'package:kilo_iot/presentation/brokers/brokers_page.dart';
-import 'package:kilo_iot/presentation/settings/settings_page.dart';
+import 'package:kilo_iot/presentation/pages/feed/feed_page.dart';
+import 'package:kilo_iot/presentation/pages/devices/devices_page.dart';
+import 'package:kilo_iot/presentation/pages/brokers/brokers_page.dart';
+import 'package:kilo_iot/presentation/pages/settings/settings_page.dart';
 
 abstract class NavigationPagesInt {
   String get initial;

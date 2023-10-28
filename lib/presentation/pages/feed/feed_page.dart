@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kilo_iot/navigation_pages_state.dart';
+import 'package:kilo_iot/presentation/navigation/navigation_store.dart';
 import 'package:provider/provider.dart';
 
 class FeedPage extends StatelessWidget {
@@ -21,13 +21,13 @@ class FeedPage extends StatelessWidget {
           GestureDetector(
             child: const Text('to settings'),
             onTap: () {
-              final pagesState = Provider.of<PagesState>(context, listen: false);
-              pagesState.page = 'settings'; 
+              final navigationStore = Provider.of<NavigationStore>(context, listen: false);
+              navigationStore.page = 'settings'; 
             },
           ),
           const SizedBox(height: 20),
-          Consumer<PagesState>(
-            builder: (context, pagesState, _) =>Text(pagesState.page)
+          Consumer<NavigationStore>(
+            builder: (context, navigationStore, _) =>Text(navigationStore.page)
           )
         ]),
       ),

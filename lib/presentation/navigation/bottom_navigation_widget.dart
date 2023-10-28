@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:kilo_iot/navigation_pages_state.dart';
-import 'package:kilo_iot/navigation_pages.dart';
+import 'package:kilo_iot/presentation/navigation/navigation_pages.dart';
+import 'package:kilo_iot/presentation/navigation/navigation_store.dart';
 import 'package:provider/provider.dart';
 
 final navigationPages = NavigationPages();
@@ -10,10 +10,10 @@ class BottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final PagesState pagesState = Provider.of<PagesState>(context, listen: true);
+    final NavigationStore navigationStore = Provider.of<NavigationStore>(context, listen: true);
 
     return Scaffold(
-      body: navigationPages.getPage(pagesState.page),
+      body: navigationPages.getPage(navigationStore.page),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         showSelectedLabels: false,
@@ -24,9 +24,9 @@ class BottomNavigation extends StatelessWidget {
         unselectedItemColor: Colors.grey[500],
 
         onTap: (index) {
-          pagesState.page = navigationPages.keys[index];
+          navigationStore.page = navigationPages.keys[index];
         },
-        currentIndex: getCurrentPageIndex(pagesState.page),
+        currentIndex: getCurrentPageIndex(navigationStore.page),
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
