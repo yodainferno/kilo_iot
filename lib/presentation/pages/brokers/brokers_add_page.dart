@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-// import '../widgets/widgets.dart'; // todo
+import 'package:kilo_iot/presentation/base_components/input_widget.dart';
 
 class BrokersAddPage extends StatefulWidget {
   const BrokersAddPage({super.key});
@@ -9,57 +9,74 @@ class BrokersAddPage extends StatefulWidget {
 }
 
 class BrokersAddPageState extends State<BrokersAddPage> {
-  final _formKey = GlobalKey<FormState>();
-  String _address = '';
+  final Map<String, String> formState = {
+    'address': 'mqtt.34devs.ru',
+    'port': '1883'
+  };
+
+  final Map<String, Map<String, String?>> formFields = {
+    'address': {
+      'label': 'Адрес сервера-брокера'
+    },
+    'port': {
+      'label': 'Порт сервера-брокера'
+    }
+  };
+
+  final requestState = {
+    'isLoading': false,
+    'isError': false,
+  };
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Brokers'),
-        ),
-        body: SingleChildScrollView(child: buildBody(context)));
-  }
-
-  Widget buildBody(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Form(
-        key: _formKey,
+      appBar: AppBar(
+        title: const Text('New Broker'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 30.0, horizontal: 15.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextFormField(
-              initialValue: 'mqtt.34devs.ru',
-              decoration: const InputDecoration(
-                labelText: 'Address',
-              ),
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Please enter an address';
-                }
-                return null;
-              },
-              onSaved: (value) {
-                _address = value ?? '';
-              },
-            ),
-            const SizedBox(height: 16),
+            ...formFields.keys.map((field_key) {
+              return InputWidget(
+                initialValue: formState[field_key],
+                onChanged: (String newValue) {
+                  setState(() {
+                    formState[field_key] = newValue;
+                  });
+                },
+                //
+                label: formFields[field_key]?['label'],
+              );
+            }),
+            const SizedBox(height: 15.0),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                minimumSize: const Size.fromHeight(36), // NEW
+                minimumSize: Size.fromHeight(40)
               ),
-              child: const Text('Submit'),
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
-                  print('Address: $_address');
-                }
+              onPressed: requestState['isLoading'] == true ? null : () async{
+                setState(() => requestState['isLoading'] = true);
+                
+                await Future.delayed(const Duration(milliseconds: 1500));
+                print(formState);
+
+                setState(() => requestState['isLoading'] = false);
               },
+              child: requestState['isLoading'] == true
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 3,
+                    )
+                )
+                : const Text('Подключиться')
             ),
           ],
-        )
-      )
+        ),
+      ),
     );
   }
+
 }
