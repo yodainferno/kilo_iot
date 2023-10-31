@@ -19,15 +19,33 @@ class BrokersPage extends StatelessWidget {
   }
 
   Widget buildBody(BuildContext context) {
-    return const Center(
+    return SingleChildScrollView(
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10.0),
-        child: Column(children: <Widget>[
-          SizedBox(height: 10),
-          Text('Brokers'),
-          SizedBox(height: 20),
-        ]),
-      ),
+        padding: const EdgeInsets.symmetric(vertical: 30.0, horizontal: 15.0),
+        child: Column(
+          children: List<Widget>.generate(100, (index) {
+            return Container(
+              width: double.infinity,
+            
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.2),
+                    spreadRadius: 1,
+                    blurRadius: 4,
+                    offset: Offset(0, 3), // changes position of shadow
+                  )
+                ]
+              ),
+              margin: EdgeInsets.only(bottom: 30.0),
+              padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 15),
+              child: Text("Block ${index + 1}"),
+            );
+          })
+        )
+      )
     );
   }
 }

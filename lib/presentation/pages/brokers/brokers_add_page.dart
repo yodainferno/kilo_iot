@@ -34,7 +34,7 @@ class BrokersAddPageState extends State<BrokersAddPage> {
       appBar: AppBar(
         title: const Text('New Broker'),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(vertical: 30.0, horizontal: 15.0),
         child: Column(
           children: [
@@ -57,7 +57,7 @@ class BrokersAddPageState extends State<BrokersAddPage> {
               ),
               onPressed: requestState['isLoading'] == true ? null : () async{
                 setState(() => requestState['isLoading'] = true);
-                
+
                 await Future.delayed(const Duration(milliseconds: 1500));
                 print(formState);
 
