@@ -38,7 +38,7 @@ class BottomNavigation extends StatelessWidget {
       children: [
         navigationPages.getPage(navigationStore.page),
         Positioned(
-          bottom: MediaQuery.of(context).padding.bottom + 10.0,
+          bottom: max(MediaQuery.of(context).padding.bottom, 15.0),
           left: MediaQuery.of(context).size.width / 2 - min(MediaQuery.of(context).size.width - 10.0*2, 600) / 2,
           width: min(MediaQuery.of(context).size.width - 10.0*2, 600),
           child: Center(
