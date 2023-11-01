@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kilo_iot/data/data_sources/mqtt_connection.dart';
 import 'package:kilo_iot/presentation/base_components/input_widget.dart';
 
 class BrokersAddPage extends StatefulWidget {
@@ -58,8 +59,16 @@ class BrokersAddPageState extends State<BrokersAddPage> {
               onPressed: requestState['isLoading'] == true ? null : () async{
                 setState(() => requestState['isLoading'] = true);
 
-                await Future.delayed(const Duration(milliseconds: 1500));
-                print(formState);
+                  MQTTConnection mqtt = MQTTConnection(
+                    address: 'mqtt.34devs.ru',
+                    port: 1883
+                  );
+                  await mqtt.connect(ttl: 300);
+                  mqtt.listenTopics(callBack: (data) {
+                    print(data.topic);
+                  });
+                  // mqtt.disconect();
+                  
 
                 setState(() => requestState['isLoading'] = false);
               },
