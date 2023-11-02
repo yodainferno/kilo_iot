@@ -21,7 +21,7 @@ class FeedPage extends StatelessWidget {
             
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                borderRadius: BorderRadius.all(Radius.circular(20.0)),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey.withOpacity(0.2),

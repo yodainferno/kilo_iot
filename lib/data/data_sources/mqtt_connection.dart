@@ -10,7 +10,8 @@ abstract class MQTTConnectionInt {
   Future<bool> connect({int? ttl});
   bool listenTopics({String? topic, required Function(MqttReceivedMessage<MqttMessage?> data) callBack});
   bool disconect();
-
+  bool get isConnected;
+  bool get isStatusChanging;
 }
 class MQTTConnection implements MQTTConnectionInt{
   late String address;
@@ -81,8 +82,16 @@ client ID: ${this.client_id}
     return true;
   }
 
+  @override
   bool get isConnected {
     return client?.connectionStatus?.state == MqttConnectionState.connected;
+  }
+
+
+  @override
+  bool get isStatusChanging {
+    return [MqttConnectionState.disconnecting, MqttConnectionState.connecting].contains(client?.connectionStatus?.state);
+    // 
   }
 
   _printInfo(String information) {

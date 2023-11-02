@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:kilo_iot/presentation/base_styles_configuration/material_color_generator.dart';
 import 'package:kilo_iot/presentation/navigation/navigation_pages.dart';
 import 'package:kilo_iot/presentation/navigation/navigation_store.dart';
 import 'package:provider/provider.dart';
@@ -38,21 +39,21 @@ class BottomNavigation extends StatelessWidget {
       children: [
         navigationPages.getPage(navigationStore.page),
         Positioned(
-          bottom: max(MediaQuery.of(context).padding.bottom, 15.0),
-          left: MediaQuery.of(context).size.width / 2 - min(MediaQuery.of(context).size.width - 10.0*2, 600) / 2,
-          width: min(MediaQuery.of(context).size.width - 10.0*2, 600),
+          bottom: max(MediaQuery.of(context).padding.bottom, 10.0),
+          left: MediaQuery.of(context).size.width / 2 - min(MediaQuery.of(context).size.width - 30*2, 600) / 2,
+          width: min(MediaQuery.of(context).size.width - 30*2, 600),
           child: Center(
             child: Container(
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
+                  color: MaterialColorGenerator.from(Color.fromARGB(255, 12, 97, 107))[900]!.withOpacity(0.5),
                   offset: const Offset(0, 2),
-                  blurRadius: 4,
+                  blurRadius: 2,
                 ),
               ],
-              borderRadius: BorderRadius.all(Radius.circular(1000)),
-              color: Colors.white
+              borderRadius: BorderRadius.all(Radius.circular(20)),
+              color: MaterialColorGenerator.from(Color.fromARGB(255, 12, 97, 107))[100],
             ),
             padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
               child: Row(
@@ -100,8 +101,8 @@ Widget buildBottomNavigationButton(BuildContext context, {
     curve: Curves.easeInOut,
     builder: (BuildContext context, double progress, Widget? child) {
 
-    Color colorBackground = ColorTween(begin: Colors.white, end: Theme.of(context).primaryColor).lerp(progress)!;
-    Color colorIcon = ColorTween(begin: Theme.of(context).primaryColor, end: Colors.white).lerp(progress)!;
+    Color colorBackground = ColorTween(begin: MaterialColorGenerator.from(Color.fromARGB(255, 12, 97, 107))[100], end: MaterialColorGenerator.from(Color.fromARGB(255, 12, 97, 107))[500]).lerp(progress)!;
+    Color colorIcon = ColorTween(begin: MaterialColorGenerator.from(Color.fromARGB(255, 12, 97, 107))[700], end: Colors.white).lerp(progress)!;
 
       return SizedBox(
         height: 50.0,
@@ -119,7 +120,7 @@ Widget buildBottomNavigationButton(BuildContext context, {
             elevation: MaterialStateProperty.all(0),
             shape: MaterialStateProperty.all<RoundedRectangleBorder>(
               RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10000.0),
+                borderRadius: BorderRadius.circular(20.0),
               )
             ),
             backgroundColor: MaterialStateProperty.all(colorBackground),
