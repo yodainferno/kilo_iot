@@ -106,7 +106,7 @@ class BrokersAddPageState extends State<BrokersAddPage> {
             ...List<Widget>.generate(
               messagesData.length,
               (index) {
-                final MqttReceivedMessage<MqttMessage?> message =
+                final MqttReceivedMessage<MqttMessage?> messageData =
                     messagesData[index]['data'];
                 final DateTime created = messagesData[index]['created'];
 
@@ -117,17 +117,26 @@ class BrokersAddPageState extends State<BrokersAddPage> {
                       children: [
                         Text(
                           DateFormat('HH:mm:ss').format(created),
-                          style: TextStyle(color: Colors.grey[700], fontSize: 16),
+                          style:
+                              TextStyle(color: Colors.grey[700], fontSize: 16),
                         ),
                         Text(
-                          "Topic: ${message.topic}",
+                          "Topic: ${messageData.topic}",
                           style: const TextStyle(fontSize: 16),
                         ),
                       ],
                     ),
                   ),
                   onTap: () {
-                    print(message.payload);
+                    final recMess = messageData.payload as MqttPublishMessage;
+                    final json_body = MqttPublishPayload.bytesToStringAsString(
+                        recMess.payload.message);
+
+                    Navigator.pushNamed(
+                      context,
+                      '/base/json_viewer',
+                      arguments: {'data': json_body},
+                    );
                   },
                 );
               },

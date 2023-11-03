@@ -39,6 +39,7 @@ dependencies:
   mqtt_client: ^10.0.0
   crypto: ^3.0.3
   intl: ^0.18.1
+  flutter_json_view: ^1.1.3
 
 dev_dependencies:
   flutter_test:
