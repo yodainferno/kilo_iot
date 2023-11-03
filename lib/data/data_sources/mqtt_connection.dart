@@ -7,38 +7,50 @@ import 'package:mqtt_client/mqtt_server_client.dart';
 
 // вернуть экземпляр работы с MQTT соединение
 abstract class MQTTConnectionInt {
-  Future<bool> connect({int? ttl});
-  bool listenTopics({String? topic, required Function(MqttReceivedMessage<MqttMessage?> data) callBack});
+  Future<bool> connect({
+    int? ttl,
+  });
+  bool listenTopics({
+    String? topic,
+    required Function(MqttReceivedMessage<MqttMessage?> data) callBack,
+  });
   bool disconect();
   bool get isConnected;
   bool get isStatusChanging;
 }
-class MQTTConnection implements MQTTConnectionInt{
-  late String address;
-  late int port;
-  late String client_id;
-  
+
+class MQTTConnection implements MQTTConnectionInt {
+  late final String address;
+  late final int port;
+  late final String clientId;
+
   MqttServerClient? client;
 
-  MQTTConnection({required this.address, port, String? client_id}) {
+  MQTTConnection({
+    required this.address,
+    int? port,
+    String? clientId,
+  }) {
     this.port = port ?? 1883;
-    this.client_id = client_id ?? _generateClientId();
+    this.clientId = clientId ?? _generateClientId();
     //
-    client = MqttServerClient(address, this.client_id);
-    client?.port = port;
-
+    client = MqttServerClient(address, this.clientId);
+    client?.port = this.port;
+    //
     _printInfo("""
 \n==============================
 MQTT instance created with:
-address: ${this.address}
-port: ${this.port}
-client ID: ${this.client_id}
+address: $address
+port: $port
+client ID: $clientId
 ==============================\n
 """);
   }
 
   @override
-  Future<bool> connect({int? ttl}) async {
+  Future<bool> connect({
+    int? ttl,
+  }) async {
     assert(ttl == null || (ttl > 0));
 
     try {
@@ -46,7 +58,9 @@ client ID: ${this.client_id}
       await client?.connect();
 
       if (!isConnected) {
-        throw Exception("Can't to connect, status: ${client?.connectionStatus!.state}");
+        throw Exception(
+          "Unable to connect, status: ${client?.connectionStatus!.state}",
+        );
       }
       if (ttl != null) {
         Future.delayed(Duration(seconds: ttl), () {
@@ -61,16 +75,21 @@ client ID: ${this.client_id}
   }
 
   @override
-  bool listenTopics({String? topic, required Function(MqttReceivedMessage<MqttMessage?>) callBack}) {
+  bool listenTopics({
+    String? topic,
+    required Function(MqttReceivedMessage<MqttMessage?>) callBack,
+  }) {
     if (!isConnected) return false;
     topic ??= '#';
-    
+
     client?.subscribe(topic, MqttQos.atMostOnce);
-    _printInfo("Subscribe: ${topic}");
-    client?.updates!.listen((List<MqttReceivedMessage<MqttMessage?>>? c) {
-      final data = c![0];
-      callBack(data);
-    });
+    _printInfo("Subscribe: $topic");
+    client?.updates!.listen(
+      (List<MqttReceivedMessage<MqttMessage?>>? c) {
+        final data = c![0];
+        callBack(data);
+      },
+    );
     return true;
   }
 
@@ -87,11 +106,12 @@ client ID: ${this.client_id}
     return client?.connectionStatus?.state == MqttConnectionState.connected;
   }
 
-
   @override
   bool get isStatusChanging {
-    return [MqttConnectionState.disconnecting, MqttConnectionState.connecting].contains(client?.connectionStatus?.state);
-    // 
+    return [
+      MqttConnectionState.disconnecting,
+      MqttConnectionState.connecting,
+    ].contains(client?.connectionStatus?.state);
   }
 
   _printInfo(String information) {
@@ -100,17 +120,17 @@ client ID: ${this.client_id}
       print(information);
     }
   }
+
   _generateClientId() {
     // используем дату
     String date = DateTime.now().toIso8601String();
 
     // используем случайное число от 1 до 10 миллионов
-    var rand = new Random();
-    String randHash = (1000000+rand.nextInt(10000000)).toString();
+    var rand = Random();
+    String randHash = (pow(10, 6) + rand.nextInt(pow(10, 7).toInt())).toString();
 
     // конвертируем в md5
-    var data = md5.convert(utf8.encode(date+randHash)).toString();
+    var data = md5.convert(utf8.encode(date + randHash)).toString();
     return 'KILO-$data';
   }
-
 }

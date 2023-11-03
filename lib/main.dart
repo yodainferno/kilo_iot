@@ -7,7 +7,9 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => NavigationStore()),
+        ChangeNotifierProvider(
+          create: (_) => NavigationStore(),
+        ),
       ],
       child: const App(),
     ),

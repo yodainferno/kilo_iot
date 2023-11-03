@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 class InputWidget extends StatefulWidget {
   final ValueChanged<String>? onChanged;
   final String? initialValue;
-
   final String? label;
 
-  InputWidget({
+  const InputWidget({
     Key? key,
     required this.onChanged,
     required this.initialValue,
@@ -14,10 +13,10 @@ class InputWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _InputWidgetState createState() => _InputWidgetState();
+  InputWidgetState createState() => InputWidgetState();
 }
 
-class _InputWidgetState extends State<InputWidget> {
+class InputWidgetState extends State<InputWidget> {
   late TextEditingController _textEditingController;
   bool listen = true;
 
@@ -39,7 +38,6 @@ class _InputWidgetState extends State<InputWidget> {
   void didUpdateWidget(covariant InputWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.initialValue != _textEditingController.text) {
-      print("${widget.initialValue} -> ${widget.initialValue}");
       listen = false;
       _textEditingController.text = widget.initialValue ?? '';
       listen = true;
@@ -58,7 +56,7 @@ class _InputWidgetState extends State<InputWidget> {
       controller: _textEditingController,
       decoration: InputDecoration(
         labelText: widget.label,
-      )
+      ),
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
-class MaterialColorGenerator{
+class MaterialColorGenerator {
   static MaterialColor from(Color color) {
     return MaterialColor(color.value, {
       50: tintColor(color, 0.9),

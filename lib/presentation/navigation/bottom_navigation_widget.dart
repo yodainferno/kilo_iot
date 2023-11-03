@@ -29,80 +29,126 @@ const List<Map> bottomNavigationItems = [
 
 class BottomNavigation extends StatelessWidget {
   const BottomNavigation({super.key});
-  
+
   @override
   Widget build(BuildContext context) {
-    final NavigationStore navigationStore = Provider.of<NavigationStore>(context, listen: true);
+    final NavigationStore navigationStore =
+        Provider.of<NavigationStore>(context, listen: true);
+
+    final double bottomMargin = max(
+      MediaQuery.of(context).padding.bottom,
+      10.0,
+    );
+
+    final double width = min(
+      MediaQuery.of(context).size.width - 30 * 2,
+      600,
+    );
 
     return Scaffold(
       body: Stack(
-      children: [
-        navigationPages.getPage(navigationStore.page),
-        Positioned(
-          bottom: max(MediaQuery.of(context).padding.bottom, 10.0),
-          left: MediaQuery.of(context).size.width / 2 - min(MediaQuery.of(context).size.width - 30*2, 600) / 2,
-          width: min(MediaQuery.of(context).size.width - 30*2, 600),
-          child: Center(
-            child: Container(
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color: MaterialColorGenerator.from(Color.fromARGB(255, 12, 97, 107))[900]!.withOpacity(0.5),
-                  offset: const Offset(0, 2),
-                  blurRadius: 2,
+        children: [
+          navigationPages.getPage(navigationStore.page),
+          Positioned(
+            bottom: bottomMargin,
+            left: (MediaQuery.of(context).size.width - width) / 2,
+            width: width,
+            child: Center(
+              child: Container(
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: MaterialColorGenerator.from(
+                        const Color.fromARGB(255, 12, 97, 107),
+                      )[900]!
+                          .withOpacity(0.5),
+                      offset: const Offset(0, 2),
+                      blurRadius: 2,
+                    ),
+                  ],
+                  borderRadius: const BorderRadius.all(Radius.circular(20)),
+                  color: MaterialColorGenerator.from(
+                    const Color.fromARGB(255, 12, 97, 107),
+                  )[100],
                 ),
-              ],
-              borderRadius: BorderRadius.all(Radius.circular(20)),
-              color: MaterialColorGenerator.from(Color.fromARGB(255, 12, 97, 107))[100],
+                padding: const EdgeInsets.only(
+                  top: 15.0,
+                  bottom: 15.0,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: List<Widget>.generate(
+                    bottomNavigationItems.length,
+                    ((index) {
+                      bool isCurrentPage =
+                          getCurrentPageIndex(navigationStore.page) == index;
+                      return buildBottomNavigationButton(
+                        context,
+                        icon: bottomNavigationItems[index]['icon'],
+                        isCurrentPage: isCurrentPage,
+                        onPressed: () {
+                          // print(navigationStore.page);
+                          navigationStore.page = navigationPages.keys[index];
+                        },
+                      );
+                    }),
+                  ),
+                ),
+              ),
             ),
-            padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: List<Widget>.generate(bottomNavigationItems.length, ((index) {
-                  bool isCurrentPage = getCurrentPageIndex(navigationStore.page) == index;
-                  return buildBottomNavigationButton(
-                    context,
-                    icon: bottomNavigationItems[index]['icon'],
-                    isCurrentPage: isCurrentPage,
-                    onPressed: () {
-                      // print(navigationStore.page);
-                      navigationStore.page = navigationPages.keys[index];
-                    },
-                  );
-                }))
-              )
-            )
           )
-        )
-
-        ]
-      )
-      
+        ],
+      ),
     );
   }
 
   int getCurrentPageIndex(String currentPage) {
     final index = navigationPages.keys.indexWhere(
-      (item) => item == currentPage
+      (item) => item == currentPage,
     );
     return index < 0 ? 0 : index;
   }
 }
 
-
-Widget buildBottomNavigationButton(BuildContext context, {
+Widget buildBottomNavigationButton(
+  BuildContext context, {
   required IconData icon,
   required bool isCurrentPage,
   required Function onPressed,
 }) {
   return TweenAnimationBuilder<double>(
-    duration: Duration(milliseconds: 300), // Длительность анимации
-    tween: Tween<double>(begin: 0, end: isCurrentPage ? 1 : 0), // Интерполяция цвета
+    duration: const Duration(milliseconds: 300), // Длительность анимации
+    tween: Tween<double>(
+      begin: 0,
+      end: isCurrentPage ? 1 : 0,
+    ),
     curve: Curves.easeInOut,
-    builder: (BuildContext context, double progress, Widget? child) {
+    builder: (
+      BuildContext context,
+      double progress,
+      Widget? child,
+    ) {
+      final Color bgBegin = MaterialColorGenerator.from(
+        const Color.fromARGB(255, 12, 97, 107),
+      )[100]!;
+      final Color bgEnd = MaterialColorGenerator.from(
+        const Color.fromARGB(255, 12, 97, 107),
+      )[500]!;
 
-    Color colorBackground = ColorTween(begin: MaterialColorGenerator.from(Color.fromARGB(255, 12, 97, 107))[100], end: MaterialColorGenerator.from(Color.fromARGB(255, 12, 97, 107))[500]).lerp(progress)!;
-    Color colorIcon = ColorTween(begin: MaterialColorGenerator.from(Color.fromARGB(255, 12, 97, 107))[700], end: Colors.white).lerp(progress)!;
+      Color colorBackground = ColorTween(
+        begin: bgBegin,
+        end: bgEnd,
+      ).lerp(progress)!;
+
+      final Color iconBegin = MaterialColorGenerator.from(
+        const Color.fromARGB(255, 12, 97, 107),
+      )[700]!;
+      const Color iconEnd = Colors.white;
+
+      Color colorIcon = ColorTween(
+        begin: iconBegin,
+        end: iconEnd,
+      ).lerp(progress)!;
 
       return SizedBox(
         height: 50.0,
@@ -110,7 +156,7 @@ Widget buildBottomNavigationButton(BuildContext context, {
         child: ElevatedButton(
           style: ButtonStyle(
             padding: MaterialStateProperty.all<EdgeInsets>(
-              EdgeInsets.all(0.0),
+              const EdgeInsets.all(0.0),
             ),
             overlayColor: MaterialStateProperty.resolveWith<Color>(
               (Set<MaterialState> states) {
@@ -121,7 +167,7 @@ Widget buildBottomNavigationButton(BuildContext context, {
             shape: MaterialStateProperty.all<RoundedRectangleBorder>(
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20.0),
-              )
+              ),
             ),
             backgroundColor: MaterialStateProperty.all(colorBackground),
           ),

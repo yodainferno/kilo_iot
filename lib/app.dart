@@ -14,7 +14,9 @@ class App extends StatelessWidget {
       },
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: MaterialColorGenerator.from(Color.fromARGB(255, 12, 97, 107)),
+        primarySwatch: MaterialColorGenerator.from(
+          const Color.fromARGB(255, 12, 97, 107),
+        ),
         scaffoldBackgroundColor: Colors.blueGrey[50],
       ),
       home: const BottomNavigation(),
