@@ -38,6 +38,14 @@ class JsonTreeViewStore extends ChangeNotifier implements JsonTreeViewStoreInt {
   // path to seleted key
   // state
   List _path = [];
+  //
+  String inputValue = '';
+  String _nameOfDevice = '';
+  String get nameOfDevice => _nameOfDevice;
+  set nameOfDevice(String value) {
+    _nameOfDevice = value;
+    notifyListeners();
+  }
 
   // actions
   @override
@@ -76,20 +84,15 @@ class JsonTreeViewStore extends ChangeNotifier implements JsonTreeViewStoreInt {
 
   void _setOpenedKeysNested(List keys, dynamic value) {
     dynamic map = _openedKeys;
-    // a -> b -> c
-    // print(keys);
-    // print(map);
     for (var i = 0; i < keys.length; i++) {
       var key = keys[i];
-      // print(key);
-
       if (!map.containsKey(key)) {
         map[key] = {
           'value': false,
           'children': {},
         };
       }
-      if (i != keys.length-1) {
+      if (i != keys.length - 1) {
         map = map[key]['children'];
       }
     }

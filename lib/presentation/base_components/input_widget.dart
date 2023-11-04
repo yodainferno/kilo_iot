@@ -56,6 +56,10 @@ class InputWidgetState extends State<InputWidget> {
       controller: _textEditingController,
       decoration: InputDecoration(
         labelText: widget.label,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 15.0),
       ),
       autocorrect: false,
     );

@@ -6,6 +6,10 @@ import 'package:kilo_iot/presentation/base_styles_configuration/material_color_g
 import 'package:kilo_iot/presentation/pages/json_tree_view/json_tree_view_store.dart';
 import 'package:provider/provider.dart';
 
+String selectedTreePathToString(List pathData) {
+  return pathData.join(' -> ');
+}
+
 class JsonTreeViewWidget extends StatelessWidget {
   const JsonTreeViewWidget({Key? key}) : super(key: key);
 
@@ -15,7 +19,6 @@ class JsonTreeViewWidget extends StatelessWidget {
         Provider.of<JsonTreeViewStore>(context, listen: true);
 
     final jsonData = jsonTreeViewStore.jsonData;
-    final openedKeys = jsonTreeViewStore.openedKeys;
 
     return Scaffold(
       appBar: AppBar(
@@ -49,23 +52,57 @@ class JsonTreeViewWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 20.0),
-              InputWidget(
-                label: 'Ключи значения (разделение через "->")',
-                onChanged: (value) {
-                  List<String> itemsRaw = value.split('->');
-                  List<String> items = List<String>.from(
-                    itemsRaw.map(
-                      (item) => item.trim(),
-                    ),
-                  );
+              const SizedBox(height: 20.0),
+              InformationBlock(
+                child: Column(
+                  children: [
+                    InputWidget(
+                      label: 'Ключи значения (разделение через "->")',
+                      onChanged: (value) {
+                        jsonTreeViewStore.inputValue = value;
+                        List<String> itemsRaw = value.split('->');
+                        List<String> items = List<String>.from(
+                          itemsRaw.map(
+                            (item) => item.trim(),
+                          ),
+                        );
 
-                  if (jsonTreeViewStore.isValueExistInJsonData(items) &&
-                      !listEquals(jsonTreeViewStore.path, items)) {
-                    jsonTreeViewStore.path = items;
-                  }
-                },
-                initialValue: selectedTreePathToString(jsonTreeViewStore.path),
+                        if (jsonTreeViewStore.isValueExistInJsonData(items)) {
+                          if (!listEquals(jsonTreeViewStore.path, items)) {
+                            jsonTreeViewStore.path = items;
+                          }
+                        } else {
+                          jsonTreeViewStore.path = [];
+                        }
+                      },
+                      initialValue: jsonTreeViewStore.inputValue
+                    ),
+                    const SizedBox(
+                      height: 10.0,
+                    ),
+                    InputWidget(
+                      label: 'Название датчика',
+                      onChanged: (value) {
+                        jsonTreeViewStore.nameOfDevice = value;
+                      },
+                      initialValue: jsonTreeViewStore.nameOfDevice
+                    ),
+                    const SizedBox(
+                      height: 10.0,
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(40),
+                        backgroundColor: const Color.fromARGB(255, 12, 97, 107),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        ),
+                      ),
+                      onPressed: validate(jsonTreeViewStore) ? () {} : null,
+                      child: const Text("Добавить датчик"),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -73,9 +110,8 @@ class JsonTreeViewWidget extends StatelessWidget {
       ),
     );
   }
-
-  String selectedTreePathToString(List pathData) {
-    return pathData.join(' -> ');
+  bool validate(JsonTreeViewStore jsonTreeViewStore) {
+    return jsonTreeViewStore.path.isNotEmpty && jsonTreeViewStore.nameOfDevice.isNotEmpty;
   }
 }
 
@@ -122,14 +158,18 @@ class JsonTreeViewNode extends StatelessWidget {
                       Expanded(
                         child: Container(
                           width: 1,
-                          margin: EdgeInsets.symmetric(vertical: 2.0),
-                          decoration: BoxDecoration(color: Colors.grey[400]),
+                          margin: const EdgeInsets.symmetric(
+                            vertical: 2.0,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[400],
+                          ),
                         ),
                       )
                     ],
                   ),
                   Padding(
-                    padding: EdgeInsets.only(left: 2.0),
+                    padding: const EdgeInsets.only(left: 2.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -172,17 +212,17 @@ class JsonTreeViewNode extends StatelessWidget {
       return GestureDetector(
         onTap: () {
           jsonTreeViewStore.path = path;
+          jsonTreeViewStore.inputValue = selectedTreePathToString(path);
         },
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 2.0, vertical: 0.0),
           decoration: BoxDecoration(
-            color: isOpenedKey
-                ? MaterialColorGenerator.from(
-                    const Color.fromARGB(255, 12, 97, 107),
-                  )[800]
-                : null,
-            borderRadius: const BorderRadius.all(Radius.circular(3.0))
-          ),
+              color: isOpenedKey
+                  ? MaterialColorGenerator.from(
+                      const Color.fromARGB(255, 12, 97, 107),
+                    )[800]
+                  : null,
+              borderRadius: const BorderRadius.all(Radius.circular(3.0))),
           child: Text(
             '$jsonData',
             style: TextStyle(
