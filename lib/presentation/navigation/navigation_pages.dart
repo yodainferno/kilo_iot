@@ -12,7 +12,7 @@ abstract class NavigationPagesInt {
 }
 
 class NavigationPages implements NavigationPagesInt {
-  final Map<String, Widget> _pages = const {
+  final Map<String, Widget> _pages = {
     'feed': FeedPage(),
     'devices': DevicesPage(),
     'brokers': BrokersPage(),
