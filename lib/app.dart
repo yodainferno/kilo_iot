@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kilo_iot/presentation/base_styles_configuration/material_color_generator.dart';
 import 'package:kilo_iot/presentation/navigation/bottom_navigation_widget.dart';
 import 'package:kilo_iot/presentation/pages/brokers/brokers_add_page.dart';
-import 'package:kilo_iot/presentation/pages/brokers/json_view_widget.dart';
+import 'package:kilo_iot/presentation/pages/json_tree_view/json_tree_view_widget.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -12,7 +12,7 @@ class App extends StatelessWidget {
     return MaterialApp(
       routes: {
         '/brokers/new': (context) => const BrokersAddPage(),
-        '/base/json_viewer': (context) => const JsonViewWidget(),
+        '/base/json_viewer': (context) => const JsonTreeViewWidget(),
       },
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

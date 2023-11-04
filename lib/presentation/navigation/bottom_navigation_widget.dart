@@ -87,7 +87,6 @@ class BottomNavigation extends StatelessWidget {
                         icon: bottomNavigationItems[index]['icon'],
                         isCurrentPage: isCurrentPage,
                         onPressed: () {
-                          // print(navigationStore.page);
                           navigationStore.page = navigationPages.keys[index];
                         },
                       );

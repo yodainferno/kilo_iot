@@ -57,6 +57,7 @@ class InputWidgetState extends State<InputWidget> {
       decoration: InputDecoration(
         labelText: widget.label,
       ),
+      autocorrect: false,
     );
   }
 }

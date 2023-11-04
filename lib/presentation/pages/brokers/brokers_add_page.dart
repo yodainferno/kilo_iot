@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:kilo_iot/data/data_sources/mqtt_connection.dart';
 import 'package:kilo_iot/presentation/base_components/information_block.dart';
 import 'package:kilo_iot/presentation/base_components/input_widget.dart';
+import 'package:kilo_iot/presentation/pages/json_tree_view/json_tree_view_store.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class BrokersAddPage extends StatefulWidget {
   const BrokersAddPage({super.key});
@@ -129,14 +133,19 @@ class BrokersAddPageState extends State<BrokersAddPage> {
                   ),
                   onTap: () {
                     final recMess = messageData.payload as MqttPublishMessage;
-                    final json_body = MqttPublishPayload.bytesToStringAsString(
+                    final jsonDataString = MqttPublishPayload.bytesToStringAsString(
                         recMess.payload.message);
 
-                    Navigator.pushNamed(
-                      context,
-                      '/base/json_viewer',
-                      arguments: {'data': json_body},
-                    );
+                    JsonTreeViewStore jsonTreeViewStore =
+                        Provider.of<JsonTreeViewStore>(context, listen: false);
+                    
+                    Map jsonData = {};
+                    try {
+                      jsonData = json.decode(jsonDataString);
+                    } catch(_) {}
+                    jsonTreeViewStore.jsonData = jsonData; 
+
+                    Navigator.pushNamed(context, '/base/json_viewer');
                   },
                 );
               },
