@@ -32,6 +32,9 @@ class JsonTreeViewStore extends ChangeNotifier implements JsonTreeViewStoreInt {
     _path = [];
     _openedKeys = {};
 
+    inputValue = '';
+    _nameOfDevice = '';
+
     notifyListeners();
   }
 
