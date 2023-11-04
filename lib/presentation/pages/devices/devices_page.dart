@@ -5,8 +5,19 @@ import 'package:kilo_iot/presentation/base_components/information_block.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DeviceData {
+  final String brokerUrl;
+  final String brokerPort;
+  final String brokerTopic;
+
+  final List keys;
   final String name;
-  DeviceData({required this.name});
+
+  DeviceData(
+      {required this.brokerUrl,
+      required this.brokerPort,
+      required this.brokerTopic,
+      required this.keys,
+      required this.name});
 }
 
 class DevicesPage extends StatefulWidget {
@@ -45,7 +56,15 @@ class _DevicesPageState extends State<DevicesPage> {
     final devicesLocalString = preferences.getString('devices') ?? '[]';
     final devicesLocal = jsonDecode(devicesLocalString);
     for (var device in devicesLocal) {
-      devices.add(DeviceData(name: device['name'] ?? ''));
+      devices.add(
+        DeviceData(
+          brokerUrl: device['broker_settings']['url'],
+          brokerPort: device['broker_settings']['port'],
+          brokerTopic: device['broker_settings']['topic'],
+          keys: device['keys'],
+          name: device['name'],
+        ),
+      );
     }
     setState(() {});
   }
@@ -60,7 +79,15 @@ class _DevicesPageState extends State<DevicesPage> {
             devices.length,
             (index) {
               return InformationBlock(
-                child: Text(devices[index].name)
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("${devices[index].brokerUrl}:${devices[index].brokerPort}"),
+                    Text(devices[index].brokerTopic),
+                    Text(devices[index].name),
+                    Text(devices[index].keys.join(' -> ')),
+                  ],
+                ),
               );
             },
           ),

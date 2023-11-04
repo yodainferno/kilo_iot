@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:kilo_iot/presentation/base_components/information_block.dart';
@@ -5,6 +7,7 @@ import 'package:kilo_iot/presentation/base_components/input_widget.dart';
 import 'package:kilo_iot/presentation/base_styles_configuration/material_color_generator.dart';
 import 'package:kilo_iot/presentation/pages/json_tree_view/json_tree_view_store.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 String selectedTreePathToString(List pathData) {
   return pathData.join(' -> ');
@@ -98,7 +101,29 @@ class JsonTreeViewWidget extends StatelessWidget {
                           borderRadius: BorderRadius.all(Radius.circular(10.0)),
                         ),
                       ),
-                      onPressed: validate(jsonTreeViewStore) ? () {} : null,
+                      onPressed: validate(jsonTreeViewStore) ? () async {
+                        SharedPreferences preferences = await SharedPreferences.getInstance();
+
+                        final devicesString = preferences.getString('devices') ?? '[]';
+                        final devices = jsonDecode(devicesString);
+
+                        devices.add({
+                          'broker_settings': {
+                            'url': jsonTreeViewStore.broker['url'],
+                            'port': jsonTreeViewStore.broker['port'],
+                            'topic': jsonTreeViewStore.topic,
+                          },
+                          'keys': jsonTreeViewStore.path,
+                          'name': jsonTreeViewStore.nameOfDevice,
+                        });
+                        
+            
+                        preferences.setString('devices', jsonEncode(devices));
+
+                        jsonTreeViewStore.nameOfDevice = '';
+                        jsonTreeViewStore.path = [];
+                        jsonTreeViewStore.inputValue = '';
+                      } : null,
                       child: const Text("Добавить датчик"),
                     ),
                   ],

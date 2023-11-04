@@ -20,6 +20,7 @@ class JsonTreeViewStore extends ChangeNotifier implements JsonTreeViewStoreInt {
   // data
   // state
   dynamic _jsonData = {};
+  Map broker = {};
 
   // actions
   @override
@@ -29,8 +30,10 @@ class JsonTreeViewStore extends ChangeNotifier implements JsonTreeViewStoreInt {
   set jsonData(dynamic newData) {
     _jsonData = newData;
 
+    topic = '';
     _path = [];
     _openedKeys = {};
+    broker = {};
 
     inputValue = '';
     _nameOfDevice = '';
@@ -41,6 +44,7 @@ class JsonTreeViewStore extends ChangeNotifier implements JsonTreeViewStoreInt {
   // path to seleted key
   // state
   List _path = [];
+  String topic = '';
   //
   String inputValue = '';
   String _nameOfDevice = '';

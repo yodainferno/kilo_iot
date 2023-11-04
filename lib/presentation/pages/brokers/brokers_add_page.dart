@@ -244,7 +244,14 @@ class BrokersAddPageState extends State<BrokersAddPage> {
                     try {
                       jsonData = json.decode(jsonDataString);
                     } catch (_) {}
-                    jsonTreeViewStore.jsonData = jsonData;
+                    if (jsonTreeViewStore.topic != messageData.topic) {
+                      jsonTreeViewStore.jsonData = jsonData;
+                      jsonTreeViewStore.topic = messageData.topic;
+                      jsonTreeViewStore.broker = {
+                        'url': formState['address'],
+                        'port': formState['port'],
+                      };
+                    }
 
                     Navigator.pushNamed(context, '/base/json_viewer');
                   },
