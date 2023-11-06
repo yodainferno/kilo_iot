@@ -3,30 +3,39 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:kilo_iot/data/data_sources/mqtt_connection.dart';
+import 'package:kilo_iot/domain/brokers/broker_data.dart';
+import 'package:kilo_iot/domain/brokers/brokers_data.dart';
 import 'package:kilo_iot/presentation/base_components/information_block.dart';
 import 'package:kilo_iot/presentation/base_components/input_widget.dart';
 import 'package:kilo_iot/presentation/base_styles_configuration/material_color_generator.dart';
 import 'package:kilo_iot/presentation/pages/json_tree_view/json_tree_view_store.dart';
+import 'package:kilo_iot/presentation/pages/json_tree_view/json_tree_view_widget.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class BrokersAddPage extends StatefulWidget {
+class BrokerInfoPage extends StatefulWidget {
   final TTL = 300;
+  final String? brokerId;
 
-  const BrokersAddPage({super.key});
+  const BrokerInfoPage({this.brokerId, super.key});
 
   @override
-  BrokersAddPageState createState() => BrokersAddPageState();
+  BrokerInfoPageState createState() => BrokerInfoPageState();
 }
 
-class BrokersAddPageState extends State<BrokersAddPage> {
+class BrokerInfoPageState extends State<BrokerInfoPage> {
+  String? brokerId;
+  BrokerData? brokerData;
+
   final Map<String, dynamic> formState = {
-    'address': 'mqtt.34devs.ru',
-    'port': '1883',
+    'name': '',
+    'address': '',
+    'port': '',
   };
 
   final Map<String, Map<String, String?>> formFields = {
+    'name': {'label': 'Название брокера'},
     'address': {'label': 'Адрес сервера-брокера'},
     'port': {'label': 'Порт сервера-брокера'},
   };
@@ -40,6 +49,39 @@ class BrokersAddPageState extends State<BrokersAddPage> {
   Map<int, bool> marks = {};
   int currentId = 1;
 
+  BrokerData brokerDataFromForm() {
+    String name =
+        formState['name'].isEmpty ? 'Без названия' : formState['name'];
+    String url =
+        formState['address'].isEmpty ? 'localhost' : formState['address'];
+    int port = 0;
+    try {
+      port = int.parse(formState['port']);
+    } catch (_) {}
+
+    formState['name'] = name;
+    formState['address'] = url;
+    formState['port'] = port.toString();
+
+    return BrokerData(name: name, url: url, port: port);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    brokerId = widget.brokerId;
+    if (brokerId != null) {
+      final BrokersData brokersData =
+          Provider.of<BrokersData>(context, listen: false);
+
+      brokerData = brokersData.brokers[brokerId];
+      formState['name'] = brokerData!.name;
+      formState['address'] = brokerData!.url;
+      formState['port'] = brokerData!.port.toString();
+    }
+  }
+
   @override
   void dispose() {
     stopTimer();
@@ -48,9 +90,12 @@ class BrokersAddPageState extends State<BrokersAddPage> {
 
   @override
   Widget build(BuildContext context) {
+    final BrokersData brokersData =
+        Provider.of<BrokersData>(context, listen: true);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('New Broker'),
+        title: const Text('Broker'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(
@@ -79,6 +124,67 @@ class BrokersAddPageState extends State<BrokersAddPage> {
                     },
                   ),
                   const SizedBox(height: 15.0),
+                  brokerId != null
+                      ? Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  minimumSize: const Size.fromHeight(40),
+                                  backgroundColor: MaterialColorGenerator.from(
+                                    const Color.fromARGB(255, 12, 97, 107),
+                                  ),
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10.0)),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  BrokerData brokerData = brokerDataFromForm();
+                                  brokersData.update(brokerId!, brokerData);
+                                  this.brokerData = brokerData;
+                                },
+                                child: const Text('Сохранить'),
+                              ),
+                            ),
+                            const SizedBox(width: 20.0),
+                            Expanded(
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  minimumSize: const Size.fromHeight(40),
+                                  backgroundColor: Colors.red[900],
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10.0)),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  brokersData.delete(brokerId!);
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('Удалить'),
+                              ),
+                            ),
+                          ],
+                        )
+                      : ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size.fromHeight(40),
+                            backgroundColor: MaterialColorGenerator.from(
+                              const Color.fromARGB(255, 12, 97, 107),
+                            ),
+                            shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                            ),
+                          ),
+                          onPressed: () {
+                            BrokerData brokerData = brokerDataFromForm();
+                            brokerId = brokersData.add(brokerDataFromForm());
+                            this.brokerData = brokerData;
+                          },
+                          child: const Text('Сохранить настройки'),
+                        ),
                   Column(
                     children: [
                       ElevatedButton(
@@ -219,7 +325,7 @@ class BrokersAddPageState extends State<BrokersAddPage> {
                         ),
                         GestureDetector(
                           child: Icon(
-                            isMarked ? Icons.bookmark :  Icons.bookmark_outline,
+                            isMarked ? Icons.bookmark : Icons.bookmark_outline,
                             color: const Color.fromARGB(255, 12, 97, 107),
                           ),
                           onTap: () {
@@ -253,7 +359,10 @@ class BrokersAddPageState extends State<BrokersAddPage> {
                       };
                     }
 
-                    Navigator.pushNamed(context, '/base/json_viewer');
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const JsonTreeViewWidget()));
                   },
                 );
               },
