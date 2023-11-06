@@ -4,7 +4,7 @@ abstract class BrokerDataInt {
   void fromJson(String jsonString);
   String toJson();
 
-  bool isStateValid();
+  // bool isStateValid();
 }
 
 class BrokerData implements BrokerDataInt {
@@ -51,8 +51,8 @@ class BrokerData implements BrokerDataInt {
     return jsonEncode(object);
   }
 
-  @override
-  bool isStateValid() {
-    return url != '' && port > 0;
-  }
+  // @override
+  // bool isStateValid() {
+  //   return url != '' && port > 0;
+  // }
 }

@@ -1,24 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:kilo_iot/domain/devices/devices_data.dart';
 import 'package:kilo_iot/presentation/base_components/information_block.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-class DeviceData {
-  final String brokerUrl;
-  final String brokerPort;
-  final String brokerTopic;
-
-  final List keys;
-  final String name;
-
-  DeviceData(
-      {required this.brokerUrl,
-      required this.brokerPort,
-      required this.brokerTopic,
-      required this.keys,
-      required this.name});
-}
 
 class DevicesPage extends StatefulWidget {
   const DevicesPage({super.key});
@@ -28,71 +14,71 @@ class DevicesPage extends StatefulWidget {
 }
 
 class _DevicesPageState extends State<DevicesPage> {
-  final List<DeviceData> devices = [];
-
-  _DevicesPageState();
-
-  @override
-  void initState() {
-    super.initState();
-    getDevices();
-  }
-
   @override
   Widget build(BuildContext context) {
+    final DevicesData devicesData =
+        Provider.of<DevicesData>(context, listen: true);
+
     return Scaffold(
       appBar: AppBar(title: const Text('Devices')),
       body: SingleChildScrollView(
-        child: buildBody(context),
-      ),
-    );
-  }
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: 30.0,
+            horizontal: 15.0,
+          ),
+          child: Wrap(
+            runSpacing: 20,
+            children: devicesData.devices.isEmpty
+                ? [
+                    Container(
+                      alignment: Alignment.center,
+                      child: const Text('Нет данных'),
+                    ),
+                  ]
+                : 
+                List.generate(
+                    devicesData.devices.length,
+                    (index) {
+                      final id = devicesData.devices.keys.toList()[index];
+                      final deviceData = devicesData.devices[id]!;
 
-  void getDevices() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-
-    // preferences.setString('devices', '[{"name": "Device 1"}, {"name": "Device 2"}]');
-
-    final devicesLocalString = preferences.getString('devices') ?? '[]';
-    final devicesLocal = jsonDecode(devicesLocalString);
-    for (var device in devicesLocal) {
-      devices.add(
-        DeviceData(
-          brokerUrl: device['broker_settings']['url'],
-          brokerPort: device['broker_settings']['port'],
-          brokerTopic: device['broker_settings']['topic'],
-          keys: device['keys'],
-          name: device['name'],
-        ),
-      );
-    }
-    setState(() {});
-  }
-
-  Widget buildBody(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 30.0, horizontal: 15.0),
-        child: Wrap(
-          runSpacing: 20,
-          children: List<Widget>.generate(
-            devices.length,
-            (index) {
-              return InformationBlock(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("${devices[index].brokerUrl}:${devices[index].brokerPort}"),
-                    Text(devices[index].brokerTopic),
-                    Text(devices[index].name),
-                    Text(devices[index].keys.join(' -> ')),
-                  ],
-                ),
-              );
-            },
+                      return GestureDetector(
+                          child: InformationBlock(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  deviceData.name,
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 18.0,
+                                  ),
+                                ),
+                                Text(
+                                  "${deviceData.topic}",
+                                  style: TextStyle(
+                                    color: Colors.grey[700],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          onTap: () {
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) =>
+                            //         // DeviceInfoPage(deviceId: id),
+                            //   ),
+                            // );
+                          });
+                    },
+                  ),
           ),
         ),
       ),
     );
   }
+
 }

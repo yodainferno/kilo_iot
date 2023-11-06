@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:kilo_iot/domain/devices/device_data.dart';
+import 'package:kilo_iot/domain/devices/devices_data.dart';
 import 'package:kilo_iot/presentation/base_components/information_block.dart';
 import 'package:kilo_iot/presentation/base_components/input_widget.dart';
 import 'package:kilo_iot/presentation/base_styles_configuration/material_color_generator.dart';
@@ -102,20 +104,30 @@ class JsonTreeViewWidget extends StatelessWidget {
                         ),
                       ),
                       onPressed: validate(jsonTreeViewStore) ? () async {
-                        SharedPreferences preferences = await SharedPreferences.getInstance();
+                        final DevicesData devicesData = Provider.of<DevicesData>(context, listen: false);
+                        devicesData.add(DeviceData(
 
-                        final devicesString = preferences.getString('devices') ?? '[]';
-                        final devices = jsonDecode(devicesString);
+                        ));
+                          String name = '';
+                          List keys = [];
+                          String payload = '';
+                          String brokerId = '';
+                          String topic = '';
 
-                        devices.add({
-                          'broker_settings': {
-                            'url': jsonTreeViewStore.broker['url'],
-                            'port': jsonTreeViewStore.broker['port'],
-                            'topic': jsonTreeViewStore.topic,
-                          },
-                          'keys': jsonTreeViewStore.path,
-                          'name': jsonTreeViewStore.nameOfDevice,
-                        });
+                        // SharedPreferences preferences = await SharedPreferences.getInstance();
+
+                        // final devicesString = preferences.getString('devices') ?? '[]';
+                        // final devices = jsonDecode(devicesString);
+
+                        // devices.add({
+                        //   'broker_settings': {
+                        //     'url': jsonTreeViewStore.broker['url'],
+                        //     'port': jsonTreeViewStore.broker['port'],
+                        //     'topic': jsonTreeViewStore.topic,
+                        //   },
+                        //   'keys': jsonTreeViewStore.path,
+                        //   'name': jsonTreeViewStore.nameOfDevice,
+                        // });
                         
             
                         preferences.setString('devices', jsonEncode(devices));

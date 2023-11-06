@@ -1,38 +1,77 @@
-// abstract class DeviceDataInt {
-//   String get brokerUrl;
-//   int get brokerPort;
+import 'dart:convert';
 
-//   String get topic;
-//   List get keys;
-//   String get name;
-// }
+abstract class DeviceDataInt {
+  void fromJson(String jsonString);
+  String toJson();
 
-// abstract class BrokerDataInt {
-//   String get url;
-//   int get port;
-// }
+  // bool isStateValid();
+}
 
+class DeviceData implements DeviceDataInt {
+  String name = '';
+  List keys = [];
+  String payload = '';
+  String brokerId = '';
+  String topic = '';
 
-// class DeviceData implements DeviceDataInt{
-//   final BrokerDataInt brokerData;
+  DeviceData({name, keys, payload, brokerId, topic}) {
+    if (name != null) {
+      this.name = name;
+    }
+    if (keys != null) {
+      this.keys = keys;
+    }
+    if (payload != null) {
+      this.payload = payload;
+    }
+    if (brokerId != null) {
+      this.brokerId = brokerId;
+    }
+    if (topic != null) {
+      this.topic = topic;
+    }
+  }
 
-//   final String topic;
-//   final List keys;
-//   final String name;
+  @override
+  fromJson(String jsonString) {
+    try {
+      final jsonData = jsonDecode(jsonString);
 
-//   DeviceData({
-//     required this.brokerData,
-//     required this.topic,
-//     required this.keys,
-//     required this.name,
-//   });
-//   // todo fromJson
+      final nameFromJson = jsonData['name'];
+      final keysFromJson = jsonData['keys'];
+      final payloadFromJson = jsonData['payload'];
 
-//   String get brokerUrl;
-//   int get brokerPort;
+      final brokerIdFromJson = jsonData['brokerId'];
+      final topicFromJson = jsonData['topic'];
 
-//   String get topic;
-//   List get keys;
-//   String get name;
+      name = nameFromJson;
+      keys = keysFromJson;
+      payload = payloadFromJson;
+      brokerId = brokerIdFromJson;
+      topic = topicFromJson;
+    } catch (_) {
+      name = '';
+      keys = [];
+      payload = '';
+      brokerId = '';
+      topic = '';
+    }
+  }
 
-// }
+  @override
+  String toJson() {
+    final object = {
+      'name': name,
+      'keys': keys,
+      'payload': payload,
+      'brokerId': brokerId,
+      'topic': topic,
+    };
+    return jsonEncode(object);
+  }
+
+  // @override
+  // bool isStateValid() {
+  //   return keys.isNotEmpty;
+  // }
+}

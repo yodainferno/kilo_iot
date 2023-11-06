@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kilo_iot/domain/brokers/brokers_data.dart';
+import 'package:kilo_iot/domain/devices/devices_data.dart';
 import 'package:kilo_iot/presentation/navigation/navigation_store.dart';
 import 'package:kilo_iot/presentation/pages/json_tree_view/json_tree_view_store.dart';
 import 'package:provider/provider.dart';
@@ -17,6 +18,9 @@ void main() {
         ),
         ChangeNotifierProvider(
           create: (_) => BrokersData(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => DevicesData(),
         ),
       ],
       child: const App(),
