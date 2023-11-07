@@ -6,7 +6,7 @@ import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 
 // вернуть экземпляр работы с MQTT соединение
-abstract class MQTTConnectionInt {
+abstract class MQTTConnectionSourceInt {
   Future<bool> connect({
     int? ttl,
   });
@@ -19,14 +19,14 @@ abstract class MQTTConnectionInt {
   bool get isStatusChanging;
 }
 
-class MQTTConnection implements MQTTConnectionInt {
+class MQTTConnectionSource implements MQTTConnectionSourceInt {
   late final String address;
   late final int port;
   late final String clientId;
 
   MqttServerClient? client;
 
-  MQTTConnection({
+  MQTTConnectionSource({
     required this.address,
     int? port,
     String? clientId,
