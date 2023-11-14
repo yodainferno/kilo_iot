@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:kilo_iot/domain/base/foreign_key.dart';
-import 'package:kilo_iot/domain/brokers/entities/broker_entity.dart';
-import 'package:kilo_iot/domain/brokers/entities/brokers_entity.dart';
+import 'package:kilo_iot/core/domain/foreign_key.dart';
+import 'package:kilo_iot/features/brokers/domain/entities/broker_entity.dart';
+import 'package:kilo_iot/features/brokers/domain/entities/brokers_entity.dart';
 
 // это сама дата -  entity
 class BrokersModel extends BrokersEntity {
@@ -28,27 +28,28 @@ class BrokersModel extends BrokersEntity {
       print('BrokersFromStorage - getData: error in parsing JSON');
       print(error.toString());
     }
-    
+
     super.brokers = brokersRaw;
   }
   // fromEntity
-BrokersModel.fromEntity(BrokersEntity entity) : super(brokers: entity.brokers);
+  BrokersModel.fromEntity(BrokersEntity entity)
+      : super(brokers: entity.brokers);
 
   String toJson() {
     try {
-    List<Map<String, dynamic>> brokersInMapForm = List.generate(
-      brokers.length,
-      (index) {
-        final broker = brokers[index];
-        return {
-          'id': broker.id.key,
-          'url': broker.url,
-          'port': broker.port,
-        };
-      },
-    );
-    return jsonEncode(brokersInMapForm);
-    } catch(_) {
+      List<Map<String, dynamic>> brokersInMapForm = List.generate(
+        brokers.length,
+        (index) {
+          final broker = brokers[index];
+          return {
+            'id': broker.id.key,
+            'url': broker.url,
+            'port': broker.port,
+          };
+        },
+      );
+      return jsonEncode(brokersInMapForm);
+    } catch (_) {
       return '[]';
     }
   }

@@ -1,5 +1,5 @@
 
-import 'package:kilo_iot/domain/base/foreign_key.dart';
+import 'package:kilo_iot/core/domain/foreign_key.dart';
 
 // это сама дата -  entity
 class BrokerEntity {
