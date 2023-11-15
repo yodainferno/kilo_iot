@@ -1,18 +1,21 @@
 
-import 'package:kilo_iot/core/domain/foreign_key.dart';
+import 'package:equatable/equatable.dart';
+import 'package:kilo_iot/core/domain/key.dart';
 
-class BrokerEntity {
-  late final ForeignKey id;
+class BrokerEntity extends Equatable {
+  late final Key id;
   final String url;
   final int port;
 
   BrokerEntity.withId({required this.id, required this.url, required this.port}) {
-    assert(url.isNotEmpty);
     assert(port > 0 && port <= 65535);
   }
 
   BrokerEntity.create({required this.url, required this.port}) {
-    id = ForeignKey.generate();
+    id = Key.generate();
     BrokerEntity.withId(id: id, url: url, port: port);
   }
+  
+  @override
+  List<Object?> get props => [id, url, port];
 }

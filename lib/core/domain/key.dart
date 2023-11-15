@@ -1,14 +1,15 @@
-import 'dart:convert'; // for the utf8.encode method
+import 'dart:convert';
 import 'package:crypto/crypto.dart';
+import 'package:equatable/equatable.dart';
 
-class ForeignKey {
+class Key extends Equatable {
   // state
   late final String key;
 
   //
-  ForeignKey({required this.key});
+  Key({required this.key});
 
-  ForeignKey.generate() {
+  Key.generate() {
     key = md5
         .convert(
           utf8.encode(
@@ -17,9 +18,6 @@ class ForeignKey {
         )
         .toString();
   }
-
   @override
-  bool operator ==(Object other) {
-    return other is ForeignKey && key == other.key;
-  }
+  List<Object?> get props => [key];
 }

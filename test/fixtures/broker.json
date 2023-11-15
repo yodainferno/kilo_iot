@@ -1,0 +1,5 @@
+{
+    "id": "test_key",
+    "url": "some_url",
+    "port": 1883
+}

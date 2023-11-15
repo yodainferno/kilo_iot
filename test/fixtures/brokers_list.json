@@ -1,0 +1,17 @@
+[
+    {
+        "id": "id1",
+        "url": "test_url_1",
+        "port": 2001
+    },
+    {
+        "id": "id2",
+        "url": "test_url_2",
+        "port": 2002
+    },
+    {
+        "id": "id3",
+        "url": "test_url_3",
+        "port": 2003
+    }
+]
