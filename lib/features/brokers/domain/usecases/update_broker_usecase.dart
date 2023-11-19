@@ -1,9 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
-import 'package:kilo_iot/core/domain/entity_key.dart';
 import 'package:kilo_iot/core/domain/usecase.dart';
 import 'package:kilo_iot/core/error/failure.dart';
-import 'package:kilo_iot/features/brokers/data/models/broker_model.dart';
 import 'package:kilo_iot/features/brokers/domain/entities/broker_entity.dart';
 import 'package:kilo_iot/features/brokers/domain/entities/brokers_list_entity.dart';
 import 'package:kilo_iot/features/brokers/domain/repository/broker_repository.dart';

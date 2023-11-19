@@ -1,0 +1,14 @@
+[
+    {
+        "id": "device_id_1",
+        "broker_id": "broker_id_1",
+        "keys": ["k1", "k2"],
+        "topic": "#"
+    },
+    {
+        "id": "device_id_2",
+        "broker_id": "broker_id_1",
+        "keys": ["k1", "k2"],
+        "topic": "#"
+    }
+]

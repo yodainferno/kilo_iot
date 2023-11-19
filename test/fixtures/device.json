@@ -1,0 +1,6 @@
+{
+    "id": "device_id",
+    "broker_id": "broker_id",
+    "keys": ["k1", "k2"],
+    "topic": "#"
+}
