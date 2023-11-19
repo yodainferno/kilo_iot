@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kilo_iot/features/brokers/presentation/pages/brokers_list_paga.dart';
 // import 'package:kilo_iot/presentation/base_styles_configuration/material_color_generator.dart';
 // import 'package:kilo_iot/presentation/pages/brokers/brokers_page.dart';
 
@@ -7,7 +8,7 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       // debugShowCheckedModeBanner: false,
       // theme: ThemeData(
       //   primarySwatch: MaterialColorGenerator.from(
@@ -15,7 +16,7 @@ class App extends StatelessWidget {
       //   ),
       //   scaffoldBackgroundColor: Colors.blueGrey[50],
       // ),
-      home: Container(), // const BrokersPage(),
+      home: BrokersListPage(),
     );
   }
 }

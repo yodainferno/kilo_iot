@@ -1,13 +1,18 @@
 import 'package:kilo_iot/features/brokers/data/models/broker_model.dart';
+import 'package:kilo_iot/features/brokers/domain/entities/broker_entity.dart';
 import 'package:kilo_iot/features/brokers/domain/entities/brokers_list_entity.dart';
 
 class BrokersListModel extends BrokersListEntity {
-  final List<BrokerModel> brokers;
+  late final List<BrokerEntity> brokers;
 
-  const BrokersListModel(this.brokers) : super(brokers);
+  BrokersListModel(this.brokers) : super(brokers);
+
+  BrokersListModel.fromEntity(BrokersListEntity entity) : super(entity.brokers) {
+    brokers = entity.brokers;
+  }
 
   List<Map<String, dynamic>> toJson() {
-    return brokers.map((broker) => broker.toJson()).toList();
+    return brokers.map((broker) => BrokerModel.fromEntity(broker).toJson()).toList();
   }
 
   factory BrokersListModel.fromJson(List<dynamic> json) {

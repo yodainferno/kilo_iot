@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:kilo_iot/core/domain/key.dart';
+import 'package:kilo_iot/core/domain/entity_key.dart';
 import 'package:kilo_iot/features/brokers/data/models/brokers_list_model.dart';
 import 'package:kilo_iot/features/brokers/domain/entities/broker_entity.dart';
 import 'package:kilo_iot/features/brokers/domain/entities/brokers_list_entity.dart';
@@ -12,17 +12,17 @@ import '../../../../fixtures/fixture_reader.dart';
 void main() {
   final tBrokersListModel = BrokersListModel([
     BrokerModel.withId(
-      id: Key(key: 'id1'),
+      id: EntityKey(key: 'id1'),
       url: 'test_url_1',
       port: 2001,
     ),
     BrokerModel.withId(
-      id: Key(key: 'id2'),
+      id: EntityKey(key: 'id2'),
       url: 'test_url_2',
       port: 2002,
     ),
     BrokerModel.withId(
-      id: Key(key: 'id3'),
+      id: EntityKey(key: 'id3'),
       url: 'test_url_3',
       port: 2003,
     ),

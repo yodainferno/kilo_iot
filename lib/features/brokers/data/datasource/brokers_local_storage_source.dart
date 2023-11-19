@@ -1,36 +1,36 @@
 import 'dart:convert';
-import 'package:kilo_iot/features/brokers/domain/entities/broker_entity.dart';
+import 'package:kilo_iot/core/error/exceptions.dart';
+import 'package:kilo_iot/features/brokers/data/models/brokers_list_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class BrokersLocalStorageSource {
-  Future<List<BrokerModel>> getBrokers();
+  Future<BrokersListModel> getBrokers();
 
-  Future<void> cacheNumberTrivia(NumberTriviaModel triviaToCache);
+  Future<void> saveBrokers(BrokersListModel brokersToSave);
 }
 
+const LOCAL_STORAGE_KEY = 'brokers';
 
-const CACHED_NUMBER_TRIVIA = 'CACHED_NUMBER_TRIVIA';
-
-class NumberTriviaLocalDataSourceImpl implements NumberTriviaLocalDataSource {
+class BrokersLocalStorageSourceImpl implements BrokersLocalStorageSource {
   final SharedPreferences sharedPreferences;
 
-  NumberTriviaLocalDataSourceImpl({required this.sharedPreferences});
+  BrokersLocalStorageSourceImpl({required this.sharedPreferences});
 
   @override
-  Future<NumberTriviaModel> getLastNumberTrivia() {
-    final String? jsonString = sharedPreferences.getString(CACHED_NUMBER_TRIVIA);
+  Future<BrokersListModel> getBrokers() {
+    final String? jsonString = sharedPreferences.getString(LOCAL_STORAGE_KEY);
     if (jsonString != null) {
-      return Future.value(NumberTriviaModel.fromJson(json.decode(jsonString)));
+      return Future.value(BrokersListModel.fromJson(json.decode(jsonString)));
     } else {
       throw CacheException();
     }
   }
 
   @override
-  Future<void> cacheNumberTrivia(NumberTriviaModel triviaToCache) {
+  Future<void> saveBrokers(BrokersListModel brokersToSave) {
     sharedPreferences.setString(
-      CACHED_NUMBER_TRIVIA,
-      json.encode(triviaToCache.toJson())
+      LOCAL_STORAGE_KEY,
+      json.encode(brokersToSave.toJson())
     );
     return Future.value(null);
   }

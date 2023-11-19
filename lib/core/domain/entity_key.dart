@@ -2,14 +2,14 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:equatable/equatable.dart';
 
-class Key extends Equatable {
+class EntityKey extends Equatable {
   // state
   late final String key;
 
   //
-  Key({required this.key});
+  EntityKey({required this.key});
 
-  Key.generate() {
+  EntityKey.generate() {
     key = md5
         .convert(
           utf8.encode(

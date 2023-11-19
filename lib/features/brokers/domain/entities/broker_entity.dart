@@ -1,9 +1,9 @@
 
 import 'package:equatable/equatable.dart';
-import 'package:kilo_iot/core/domain/key.dart';
+import 'package:kilo_iot/core/domain/entity_key.dart';
 
 class BrokerEntity extends Equatable {
-  late final Key id;
+  late final EntityKey id;
   final String url;
   final int port;
 
@@ -12,7 +12,7 @@ class BrokerEntity extends Equatable {
   }
 
   BrokerEntity.create({required this.url, required this.port}) {
-    id = Key.generate();
+    id = EntityKey.generate();
     BrokerEntity.withId(id: id, url: url, port: port);
   }
   

@@ -1,23 +1,32 @@
 import 'package:dartz/dartz.dart';
-import 'package:kilo_iot/core/domain/key.dart';
 import 'package:kilo_iot/core/error/failure.dart';
-import 'package:kilo_iot/features/brokers/domain/entities/broker_entity.dart';
+import 'package:kilo_iot/features/brokers/data/datasource/brokers_local_storage_source.dart';
+import 'package:kilo_iot/features/brokers/data/models/brokers_list_model.dart';
+import 'package:kilo_iot/features/brokers/domain/entities/brokers_list_entity.dart';
 import 'package:kilo_iot/features/brokers/domain/repository/broker_repository.dart';
 
-// class BrokerRepositoryImpl implements BrokerRepository {
-//   BrokerRepositoryImpl({
-//     required BrokersLocalStorageSource localStorageSource
-//   })
-//   Future<Either<Failure, List<BrokerEntity>>> getBrokers() {
+class BrokersListRepositoryImpl implements BrokersListRepository {
+  final BrokersLocalStorageSource localStorageSource;
 
-//   }
-//   Future<Either<Failure, void>> addBroker(BrokerEntity broker) {
+  BrokersListRepositoryImpl({
+    required this.localStorageSource
+  });
 
-//   }
-//   Future<Either<Failure, void>> updateBroker(Key key, BrokerEntity broker) {
-
-//   }
-//   Future<Either<Failure, void>> deleteBroker(Key key) {
-
-//   }
-// }
+  @override
+  Future<Either<Failure, BrokersListEntity>> getBrokers() async{
+    try {
+      return Right(await localStorageSource.getBrokers());
+    } catch(error) {
+      return Left(Failure(name: 'Error in getting brokers', description: error.toString()));
+    }
+  }
+  @override
+  Future<Either<Failure, void>> saveBrokers(BrokersListEntity brokers) async {
+    BrokersListModel brokersModel = BrokersListModel.fromEntity(brokers);
+    try {
+      return Right(await localStorageSource.saveBrokers(brokersModel));
+    } catch(error) {
+      return Left(Failure(name: 'Error in getting brokers', description: error.toString()));
+    }
+  }
+}
