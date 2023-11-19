@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kilo_iot/features/brokers/presentation/storages/brokers_list_storage.dart';
 import 'package:kilo_iot/features/devices/presentation/storages/brokers_list_storage.dart';
+import 'package:kilo_iot/features/widgets/presentation/storages/widgets_list_storage.dart';
 // import 'package:kilo_iot/domain/brokers/brokers_data.dart';
 // import 'package:kilo_iot/presentation/navigation/navigation_store.dart';
 // import 'package:kilo_iot/presentation/pages/json_tree_view/json_tree_view_store.dart';
@@ -17,9 +18,9 @@ void main() {
         ChangeNotifierProvider(
           create: (_) => DevicesListStorage(),
         ),
-        // ChangeNotifierProvider(
-        //   create: (_) => JsonTreeViewStore(),
-        // ),
+        ChangeNotifierProvider(
+          create: (_) => WidgetsListStorage(),
+        ),
         // ChangeNotifierProvider(
         //   create: (_) => BrokersData(),
         // ),
