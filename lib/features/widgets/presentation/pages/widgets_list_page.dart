@@ -20,7 +20,23 @@ class _WidgetsListPageState extends State<WidgetsListPage> {
     final List<WidgetEntity> widgetsList = widgetsListStorage.widgets.widgets;
 
     return Scaffold(
-      body: SafeArea(
+      appBar: AppBar(
+        title: const Text('Widgets'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) => const BrokerInfoPage(),
+              //   ),
+              // );
+            },
+            icon: const Icon(Icons.add),
+          ),
+        ],
+      ),
+      body:  SafeArea(
         child: SingleChildScrollView(
           child: Column(
             children: [

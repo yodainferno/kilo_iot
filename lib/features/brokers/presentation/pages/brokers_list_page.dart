@@ -19,6 +19,22 @@ class _BrokersListPageState extends State<BrokersListPage> {
     final List<BrokerEntity> brokersList = brokersListStorage.brokers.brokers;
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Brokers'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) => const BrokerInfoPage(),
+              //   ),
+              // );
+            },
+            icon: const Icon(Icons.add),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(

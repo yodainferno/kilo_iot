@@ -20,6 +20,22 @@ class _DevicesListPageState extends State<DevicesListPage> {
     final List<DeviceEntity> devicesList = devicesListStorage.devices.devices;
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Devices'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) => const BrokerInfoPage(),
+              //   ),
+              // );
+            },
+            icon: const Icon(Icons.add),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
