@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kilo_iot/core/presentation/base_components/information_block.dart';
 import 'package:kilo_iot/features/brokers/domain/entities/broker_entity.dart';
-import 'package:kilo_iot/features/brokers/presentation/pages/broker_info_page.dart';
+import 'package:kilo_iot/features/brokers/presentation/pages/broker_info/broker_info_page.dart';
 import 'package:kilo_iot/features/brokers/presentation/storages/brokers_list_storage.dart';
 import 'package:provider/provider.dart';
 
@@ -29,7 +29,7 @@ class _BrokersListPageState extends State<BrokersListPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const BrokerInfoPage(),
+                  builder: (context) => BrokerInfoPage(),
                 ),
               );
             },
