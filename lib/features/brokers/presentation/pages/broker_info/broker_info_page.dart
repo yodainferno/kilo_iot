@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:kilo_iot/features/brokers/presentation/pages/broker_info/storages/broker_info_form_state.dart';
 import 'package:kilo_iot/features/brokers/presentation/pages/broker_info/storages/broker_info_tab_state.dart';
+import 'package:kilo_iot/features/brokers/presentation/pages/broker_info/storages/messages_state.dart';
+import 'package:kilo_iot/features/brokers/presentation/pages/broker_info/storages/mqtt_connection_state.dart';
 import 'package:kilo_iot/features/brokers/presentation/pages/broker_info/widgets/page_view_widget.dart';
 import 'package:kilo_iot/features/brokers/presentation/pages/broker_info/widgets/page_indicator_widget.dart';
 import 'package:provider/provider.dart';
 
 class BrokerInfoPage extends StatelessWidget {
-  // consts
-  final defaultTTL = 300; // время жизни соединения
-
   const BrokerInfoPage({super.key});
 
   // build
   @override
   Widget build(BuildContext context) {
+    // todo сделать заполнение состояния формы, если что-то пришло в качестве аргументов
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -21,6 +22,16 @@ class BrokerInfoPage extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => TabStorage(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => MessagesStorage(),
+        ),
+        // ChangeNotifierProxyProvider<MessagesStorage, MqttConnectionStorage>(
+        //   create: (context) => MqttConnectionStorage(),
+        //   update: (_, myFirst, mySecond) {}
+        // )
+        ChangeNotifierProvider(
+          create: (_) => MqttConnectionStorage(),
         ),
       ],
       child: Scaffold(
@@ -42,18 +53,7 @@ class BrokerInfoPage extends StatelessWidget {
 
 
 
-// import 'dart:async';
-// import 'dart:convert';
 
-// import 'package:flutter/material.dart';
-// import 'package:kilo_iot/core/domain/mqtt_data_source.dart';
-// import 'package:kilo_iot/core/presentation/base_components/information_block.dart';
-// import 'package:kilo_iot/core/presentation/base_components/input_widget.dart';
-// import 'package:kilo_iot/features/brokers/domain/entities/broker_entity.dart';
-// import 'package:kilo_iot/features/brokers/domain/entities/brokers_list_entity.dart';
-// import 'package:mqtt_client/mqtt_client.dart';
-// import 'package:intl/intl.dart';
-// import 'package:provider/provider.dart';
 
 // class BrokerInfoPage extends StatefulWidget {
 //   final TTL = 300;

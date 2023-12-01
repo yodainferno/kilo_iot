@@ -3,15 +3,16 @@ import 'package:kilo_iot/core/presentation/base_components/information_block.dar
 import 'package:kilo_iot/features/brokers/presentation/pages/broker_info/storages/broker_info_tab_state.dart';
 import 'package:kilo_iot/features/brokers/presentation/pages/broker_info/widgets/form_widget.dart';
 import 'package:kilo_iot/features/brokers/presentation/pages/broker_info/widgets/messages_list_widget.dart';
+import 'package:kilo_iot/features/brokers/presentation/pages/broker_info/widgets/mqtt_connection_indicator.dart';
 import 'package:provider/provider.dart';
 
-// ignore: must_be_immutable
-class BrokerInfoPageView extends StatelessWidget {
-  BrokerInfoPageView({super.key});
 
+class BrokerInfoPageView extends StatelessWidget {
   // tab controller
   TabStorage? tabStorage;
   final PageController tabController = PageController(initialPage: 0);
+
+  BrokerInfoPageView({super.key});
   void _initTabControllerOnChanged(BuildContext context) {
     tabStorage = Provider.of<TabStorage>(context, listen: false);
     tabController.addListener(
@@ -22,7 +23,9 @@ class BrokerInfoPageView extends StatelessWidget {
     );
   }
 
-  void dispose() => tabController.dispose();
+  void dispose() {
+    return tabController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,8 +40,14 @@ class BrokerInfoPageView extends StatelessWidget {
             vertical: 30.0,
             horizontal: 15.0,
           ),
-          child: InformationBlock(
-            child: BrokerFormWidget(),
+          child: Column(
+            children: [
+              InformationBlock(
+                child: BrokerFormWidget(),
+              ),
+              const SizedBox(height: 15.0),
+              MqttConnectionIndicator()
+            ],
           ),
         ),
         const SingleChildScrollView(

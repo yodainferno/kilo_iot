@@ -13,8 +13,8 @@ class BrokerFormStorage extends ChangeNotifier {
   }
 
   final Map<String, dynamic> state = {
-    'name': '',
-    'address': '',
-    'port': '',
+    'name': 'Test broker',
+    'address': 'mqtt.34devs.ru',
+    'port': '1883',
   };
 }
