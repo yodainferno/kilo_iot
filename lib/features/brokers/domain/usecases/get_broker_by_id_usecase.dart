@@ -8,10 +8,10 @@ import 'package:kilo_iot/features/brokers/domain/entities/brokers_list_entity.da
 import 'package:kilo_iot/features/brokers/domain/repository/broker_repository.dart';
 
 
-class GetBrokers implements UseCase<BrokerEntity, FindParams> {
+class GetBrokerById implements UseCase<BrokerEntity, FindParams> {
   final BrokersListRepository repository;
 
-  GetBrokers(this.repository);
+  GetBrokerById(this.repository);
 
   // callable class
   @override

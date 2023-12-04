@@ -82,15 +82,16 @@ class MqttConnectionIndicator extends StatelessWidget {
           child: button_child,
         ),
         const SizedBox(height: 5.0),
-        mqttConnectionStorage.mqttConnection == null
-            ? Container()
-            : Text(
-                "До автоматического отключения: ${mqttConnectionStorage.ttlCounter} сек.",
-                style: TextStyle(
-                  color: Colors.grey[700],
-                  fontSize: 14.0,
-                ),
-              ),
+        Text(
+          mqttConnectionStorage.mqttConnection == null ||
+                  mqttConnectionStorage.mqttConnection?.isConnected != true
+              ? ''
+              : "До автоматического отключения: ${mqttConnectionStorage.ttlCounter} сек.",
+          style: TextStyle(
+            color: Colors.grey[700],
+            fontSize: 14.0,
+          ),
+        ),
       ],
     );
   }

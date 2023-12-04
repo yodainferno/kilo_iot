@@ -14,6 +14,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class BrokersListStorage extends ChangeNotifier {
   BrokersListEntity brokers = const BrokersListEntity([]);
+  BrokerEntity? currentBroker;
+
+  setCurrentBroker(BrokerEntity? broker) {
+    currentBroker = broker;
+    notifyListeners();
+  }
 
   GetBrokers? getBrokersUsecase;
   AddBroker? addBrokerUsecase;
@@ -54,7 +60,11 @@ class BrokersListStorage extends ChangeNotifier {
     });
   }
 
-  void addBroker({
+  // void GetBrokerById() {
+  //   GetBrokerById
+  // }
+
+  Future<Either<Failure, BrokerEntity>> addBroker({
     required String url,
     required String port,
   }) async {
@@ -66,24 +76,37 @@ class BrokersListStorage extends ChangeNotifier {
 
       final portInt = int.parse(port);
       broker = BrokerEntity.create(url: url, port: portInt);
-    } catch (_) {
+    } catch (error) {
       //
-      return;
+      return Left(
+        Failure(
+          name: 'Cant add broker',
+          description: error.toString(),
+        ),
+      );
     }
 
-    Either<Failure, void> data = await addBrokerUsecase!(AddParams(
-      brokersList: brokers,
-      newBroker: broker,
-    ));
-
-    data.fold((Failure failure) {
+    Either<Failure, void> data = await addBrokerUsecase!(
+      AddParams(
+        brokersList: brokers,
+        newBroker: broker,
+      ),
+    );
+    return data.fold((Failure failure) {
       // erorr
+      return Left(
+        Failure(
+          name: 'Cant add broker',
+          description: failure.toString(),
+        ),
+      );
     }, (_) async {
       getBrokers();
+      return Right(broker!);
     });
   }
 
-  void deleteBroker({
+  Future<Either<Failure, void>> deleteBroker({
     required EntityKey id,
   }) async {
     assert(deleteBrokerUsecase != null);
@@ -93,14 +116,21 @@ class BrokersListStorage extends ChangeNotifier {
       deleteId: id,
     ));
 
-    data.fold((Failure failure) {
+    return data.fold((Failure failure) {
       // erorr
+      return Left(
+        Failure(
+          name: 'Cant add broker',
+          description: failure.toString(),
+        ),
+      );
     }, (_) async {
       getBrokers();
+      return const Right(null);
     });
   }
 
-  void updateBroker({
+  Future<Either<Failure, BrokerEntity>> updateBroker({
     required EntityKey id,
     required String url,
     required String port,
@@ -113,9 +143,10 @@ class BrokersListStorage extends ChangeNotifier {
 
       final portInt = int.parse(port);
       broker = BrokerEntity.withId(id: id, url: url, port: portInt);
-    } catch (_) {
+    } catch (error) {
       //
-      return;
+      return Left(
+          Failure(name: 'Cant update broker', description: error.toString()));
     }
 
     Either<Failure, void> data = await updateBrokerUsecase!(UpdateParams(
@@ -123,10 +154,13 @@ class BrokersListStorage extends ChangeNotifier {
       updatedBroker: broker,
     ));
 
-    data.fold((Failure failure) {
+    return data.fold((Failure failure) {
       // erorr
+      return Left(
+          Failure(name: 'Cant add broker', description: failure.toString()));
     }, (_) async {
       getBrokers();
+      return Right(broker!);
     });
   }
 }

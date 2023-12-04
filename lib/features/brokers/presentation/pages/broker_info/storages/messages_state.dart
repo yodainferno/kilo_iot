@@ -4,6 +4,11 @@ import 'package:mqtt_client/mqtt_client.dart';
 
 class MessagesStorage extends ChangeNotifier {
   List messagesData = [];
+  Map<EntityKey, bool> marks = {};
+  void setMark(EntityKey id, bool value) {
+    marks[id] = value;
+    notifyListeners();
+  }
 
   void addData(MqttReceivedMessage<MqttMessage?> data) {
     messagesData.insert(0, {

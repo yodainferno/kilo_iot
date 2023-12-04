@@ -14,8 +14,10 @@ class MqttConnectionStorage extends ChangeNotifier {
     // todo - change provider lib
     // await Future.delayed(Duration(seconds: 1));
     final result = await mqttConnection?.connect(ttl: ttl);
-    startTimer();
-    notifyListeners();
+    if (result == true) {
+      startTimer();
+      notifyListeners();
+    }
     return result;
   }
   void disconect() {

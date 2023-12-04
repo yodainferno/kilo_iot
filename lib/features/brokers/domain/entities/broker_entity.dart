@@ -18,4 +18,6 @@ class BrokerEntity extends Equatable {
   
   @override
   List<Object?> get props => [id, url, port];
+
+  EntityKey? get key => null;
 }

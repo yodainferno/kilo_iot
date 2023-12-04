@@ -8,11 +8,11 @@ class BrokerFormWidget extends StatelessWidget {
   BrokerFormWidget({super.key});
 
   final Map<String, Map<String, String?>> formFields = {
-    'name': {'label': 'Название брокера'},
+    // 'name': {'label': 'Название брокера'},
     'address': {'label': 'Адрес сервера-брокера'},
     'port': {'label': 'Порт сервера-брокера'},
   };
-
+  
   @override
   Widget build(BuildContext context) {
     final BrokerFormStorage brokerFormStorage =

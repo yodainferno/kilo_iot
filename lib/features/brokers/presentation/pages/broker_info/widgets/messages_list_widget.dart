@@ -1,5 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:kilo_iot/core/domain/entity_key.dart';
 import 'package:kilo_iot/core/presentation/base_components/information_block.dart';
+import 'package:kilo_iot/core/presentation/json_tree/json_tree_view_store.dart';
+import 'package:kilo_iot/core/presentation/json_tree/json_tree_view_widget.dart';
 import 'package:kilo_iot/features/brokers/presentation/pages/broker_info/storages/messages_state.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:provider/provider.dart';
@@ -21,11 +26,13 @@ class MessagesListWidget extends StatelessWidget {
         children: List<Widget>.generate(
           messagesData.length,
           (index) {
+            final message = messagesData[index];
+            
             final MqttReceivedMessage<MqttMessage?> messageData =
-                messagesData[index]['data'];
-            final DateTime created = messagesData[index]['created'];
-            // final int id = messagesData[index]['id'];
-            // final bool isMarked = marks[id] == true;
+                message['data'];
+            final DateTime created = message['created'];
+            final EntityKey id = message['id'];
+            final bool isMarked = messagesStorage.marks[id] == true;
 
             String formattedMilliseconds =
                 created.millisecond.toString().padLeft(3, '0');
@@ -50,45 +57,45 @@ class MessagesListWidget extends StatelessWidget {
                         ],
                       ),
                     ),
-                    // GestureDetector(
-                    //   child: Icon(
-                    //     isMarked ? Icons.bookmark : Icons.bookmark_outline,
-                    //     color: const Color.fromARGB(255, 12, 97, 107),
-                    //   ),
-                    //   onTap: () {
-                    //     setState(() {
-                    //       marks[id] = !isMarked;
-                    //     });
-                    //   },
-                    // )
+                    GestureDetector(
+                      child: Icon(
+                        isMarked ? Icons.bookmark : Icons.bookmark_outline,
+                        color: const Color.fromARGB(255, 12, 97, 107),
+                      ),
+                      onTap: () {
+                        messagesStorage.setMark(id, !isMarked);
+                      },
+                    )
                   ],
                 ),
               ),
               onTap: () {
-                // final recMess = messageData.payload as MqttPublishMessage;
-                // final jsonDataString = MqttPublishPayload.bytesToStringAsString(
-                //     recMess.payload.message);
+                final recMess = messageData.payload as MqttPublishMessage;
+                final jsonDataString = MqttPublishPayload.bytesToStringAsString(
+                    recMess.payload.message);
 
-                // JsonTreeViewStore jsonTreeViewStore =
-                //     Provider.of<JsonTreeViewStore>(context, listen: false);
+                JsonTreeViewStore jsonTreeViewStore =
+                    Provider.of<JsonTreeViewStore>(context, listen: false);
 
-                // Map jsonData = {};
-                // try {
-                //   jsonData = json.decode(jsonDataString);
-                // } catch (_) {}
+                Map jsonData = {};
+                try {
+                  jsonData = json.decode(jsonDataString);
+                } catch (_) {}
                 // if (jsonTreeViewStore.topic != messageData.topic) {
-                //   jsonTreeViewStore.jsonData = jsonData;
-                //   jsonTreeViewStore.topic = messageData.topic;
+                  jsonTreeViewStore.jsonData = jsonData;
+                  jsonTreeViewStore.topic = messageData.topic;
                 //   jsonTreeViewStore.broker = {
                 //     'url': formState['address'],
                 //     'port': formState['port'],
                 //   };
                 // }
 
-                // Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //         builder: (context) => const JsonTreeViewWidget()));
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const JsonTreeViewWidget(),
+                  ),
+                );
               },
             );
           },

@@ -68,7 +68,7 @@ client ID: $clientId
         });
       }
       return true;
-    } on Exception catch (e) {
+    } catch (e) {
       _printInfo("Connect error: ${e.toString()}");
       return false;
     }
