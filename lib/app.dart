@@ -14,8 +14,7 @@ class App extends StatelessWidget {
     if (!isMqttConnectionInit) {
       MqttWidgetConnection mqttWidgetConnection =
         Provider.of<MqttWidgetConnection>(context, listen: false);
-
-      mqttWidgetConnection.connect();
+      mqttWidgetConnection.connect(context);
     }
     return MaterialApp(
       debugShowCheckedModeBanner: false,

@@ -12,9 +12,9 @@ abstract class JsonTreeViewStoreInt {
 
   // opened nested keys
   Map get openedKeys;
-  bool isOpened(List path);
-  void open(List path);
-  void close(List path);
+  bool isOpened(List<String> path);
+  void open(List<String> path);
+  void close(List<String> path);
 }
 
 class JsonTreeViewStore extends ChangeNotifier implements JsonTreeViewStoreInt {
@@ -72,23 +72,23 @@ class JsonTreeViewStore extends ChangeNotifier implements JsonTreeViewStoreInt {
   Map get openedKeys => _openedKeys;
 
   @override
-  bool isOpened(List path) {
+  bool isOpened(List<String> path) {
     return _getNestedValue(_openedKeys, path) == true;
   }
 
   @override
-  void open(List path) {
+  void open(List<String> path) {
     _setOpenedKeysNested(path, true);
     notifyListeners();
   }
 
   @override
-  void close(List path) {
+  void close(List<String> path) {
     _setOpenedKeysNested(path, false);
     notifyListeners();
   }
 
-  void _setOpenedKeysNested(List keys, dynamic value) {
+  void _setOpenedKeysNested(List<String> keys, dynamic value) {
     dynamic map = _openedKeys;
     for (var i = 0; i < keys.length; i++) {
       var key = keys[i];
@@ -106,7 +106,7 @@ class JsonTreeViewStore extends ChangeNotifier implements JsonTreeViewStoreInt {
     map[lastKey]['value'] = value;
   }
 
-  dynamic _getNestedValue(Map map, List keys) {
+  dynamic _getNestedValue(Map map, List<String> keys) {
     dynamic value = map;
     for (var key in keys) {
       if (value is Map && value.containsKey(key)) {
@@ -122,7 +122,7 @@ class JsonTreeViewStore extends ChangeNotifier implements JsonTreeViewStoreInt {
     return value;
   }
 
-  bool isValueExistInJsonData(List keys) {
+  bool isValueExistInJsonData(List<String> keys) {
     dynamic value = jsonData;
 
     for (var key in keys) {

@@ -16,12 +16,15 @@ class BrokerInfoPage extends StatelessWidget {
   Widget build(BuildContext context) {
     BrokersListStorage brokersListStorage =
         Provider.of<BrokersListStorage>(context, listen: false);
+    final BrokerFormStorage brokerFormStorage =
+        Provider.of<BrokerFormStorage>(context, listen: false);
+    brokerFormStorage.setStateFromBroker(brokersListStorage.currentBroker);
 
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (_) => BrokerFormStorage(brokersListStorage.currentBroker),
-        ),
+        // ChangeNotifierProvider(
+        //   create: (_) => BrokerFormStorage(brokersListStorage.currentBroker),
+        // ),
         ChangeNotifierProvider(
           create: (_) => TabStorage(),
         ),
@@ -34,7 +37,9 @@ class BrokerInfoPage extends StatelessWidget {
       ],
       child: Scaffold(
         appBar: AppBar(
-          title: Text(brokersListStorage.currentBroker != null ? 'Брокер' : 'Новый брокер'),
+          title: Text(brokersListStorage.currentBroker != null
+              ? 'Брокер'
+              : 'Новый брокер'),
         ),
         body: Stack(
           children: [

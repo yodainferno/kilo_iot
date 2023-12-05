@@ -24,7 +24,7 @@ class _BrokerInfoWidgetState extends State<BrokerInfoWidget> {
 
     await Future.delayed(const Duration(milliseconds: 0));
 
-    final brokerDataRaw = await brokersListStorage
+    final brokerDataRaw = brokersListStorage
         .getBrokerById(devicesListStorage.currentDevice!.brokerId);
 
     if (brokerDataRaw != null) {
@@ -35,7 +35,7 @@ class _BrokerInfoWidgetState extends State<BrokerInfoWidget> {
   }
 
   final Map<String, Map<String, String?>> formFields = {
-    // 'name': {'label': 'Название брокера'},
+    'name': {'label': 'Название брокера'},
     'address': {'label': 'Адрес сервера-брокера'},
     'port': {'label': 'Порт сервера-брокера'},
   };
@@ -48,6 +48,11 @@ class _BrokerInfoWidgetState extends State<BrokerInfoWidget> {
     return Wrap(
       runSpacing: 20,
       children: [
+        InputWidget(
+          initialValue: brokerData?.name,
+          disabled: true,
+          label: formFields['name']!['label'],
+        ),
         InputWidget(
           initialValue: brokerData?.url,
           disabled: true,

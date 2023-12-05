@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kilo_iot/core/helpers/mqtt_widget_connection.dart';
 import 'package:kilo_iot/core/presentation/base_components/information_block.dart';
+import 'package:kilo_iot/features/brokers/presentation/pages/brokers_list/storages/brokers_list_storage.dart';
 import 'package:kilo_iot/features/devices/domain/entities/device_entity.dart';
 import 'package:kilo_iot/features/devices/presentation/pages/device_info/device_page.dart';
 import 'package:kilo_iot/features/devices/presentation/pages/devices_list/storages/brokers_list_storage.dart';
@@ -14,16 +15,16 @@ class DevicesListPage extends StatefulWidget {
 }
 
 class _DevicesListPageState extends State<DevicesListPage> {
-  dynamic getDataByKeys(Map object, List<String> keys) {
-    if (keys.isEmpty || object.isEmpty) return null;
+  // dynamic getDataByKeys(Map object, List<String> keys) {
+  //   if (keys.isEmpty || object.isEmpty) return null;
 
-    final data = object[keys[0]];
-    if (data is Map) {
-      return getDataByKeys(data, keys.sublist(1));
-    } else {
-      return data;
-    }
-  }
+  //   final data = object[keys[0]];
+  //   if (data is Map) {
+  //     return getDataByKeys(data, keys.sublist(1));
+  //   } else {
+  //     return data;
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -79,32 +80,51 @@ class _DevicesListPageState extends State<DevicesListPage> {
 
     final List<DeviceEntity> devicesList = devicesListStorage.devices.devices;
 
+    final BrokersListStorage brokersListStorage =
+        Provider.of<BrokersListStorage>(context, listen: false);
+
     return List.generate(
       devicesList.length,
       (index) {
         DeviceEntity device = devicesList[index];
+        final brokerData = brokersListStorage.getBrokerById(device.brokerId);
+        final brokerKey =
+            brokerData != null ? "${brokerData.url}:${brokerData.port}" : "";
 
         return GestureDetector(
           child: InformationBlock(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Stack(
               children: [
-                Text(
-                  device.name,
-                  style: TextStyle(
-                    fontSize: 15.0,
-                    color: Colors.grey[700],
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      device.name,
+                      style: TextStyle(
+                        fontSize: 15.0,
+                        color: Colors.grey[700],
+                      ),
+                    ),
+                    const SizedBox(height: 5.0),
+                    Text(
+                      mqttWidgetConnection.getDataByTopicKeys(
+                          brokerKey, device.topic, device.keys),
+                      style: const TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 5.0),
-                Text(
-                  mqttWidgetConnection.getDataByTopicKeys(
-                      device.topic, device.keys),
-                  style: const TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+                brokerData == null
+                    ? Align(
+                        alignment: Alignment.topRight,
+                        child: Icon(
+                          Icons.warning_amber_rounded,
+                          color: Colors.red[900],
+                        ),
+                      )
+                    : Container()
               ],
             ),
           ),

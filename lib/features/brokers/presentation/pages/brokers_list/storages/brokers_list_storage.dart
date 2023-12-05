@@ -8,7 +8,6 @@ import 'package:kilo_iot/features/brokers/domain/entities/broker_entity.dart';
 import 'package:kilo_iot/features/brokers/domain/entities/brokers_list_entity.dart';
 import 'package:kilo_iot/features/brokers/domain/usecases/add_broker_usecase.dart';
 import 'package:kilo_iot/features/brokers/domain/usecases/delete_broker_usecase.dart';
-import 'package:kilo_iot/features/brokers/domain/usecases/get_broker_by_id_usecase.dart';
 import 'package:kilo_iot/features/brokers/domain/usecases/get_brokers_usecase.dart';
 import 'package:kilo_iot/features/brokers/domain/usecases/update_broker_usecase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,7 +22,6 @@ class BrokersListStorage extends ChangeNotifier {
   }
 
   GetBrokers? getBrokersUsecase;
-  GetBrokerById? getBrokerByIdUsecase;
   AddBroker? addBrokerUsecase;
   DeleteBroker? deleteBrokerUsecase;
   UpdateBroker? updateBrokerUsecase;
@@ -43,7 +41,6 @@ class BrokersListStorage extends ChangeNotifier {
     );
 
     getBrokersUsecase = GetBrokers(repositoryInstance);
-    getBrokerByIdUsecase = GetBrokerById(repositoryInstance);
     addBrokerUsecase = AddBroker(repositoryInstance);
     deleteBrokerUsecase = DeleteBroker(repositoryInstance);
     updateBrokerUsecase = UpdateBroker(repositoryInstance);
@@ -63,18 +60,13 @@ class BrokersListStorage extends ChangeNotifier {
     });
   }
 
-  Future<BrokerEntity?> getBrokerById(EntityKey id) async {
-    assert(getBrokerByIdUsecase != null);
-
-    Either<Failure, BrokerEntity> data =
-        await getBrokerByIdUsecase!(FindParams(findId: id));
-
-    return data.fold((Failure failure) {
-      // erorr
+  BrokerEntity? getBrokerById(EntityKey findId) {
+    int foundEntity = brokers.brokers
+        .indexWhere((BrokerEntity broker) => broker.id == findId);
+    if (foundEntity == -1) {
       return null;
-    }, (BrokerEntity data) async {
-      return data;
-    });
+    }
+    return brokers.brokers[foundEntity];
   }
 
   // void GetBrokerById() {

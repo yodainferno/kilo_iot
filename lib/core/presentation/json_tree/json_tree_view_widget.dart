@@ -1,8 +1,12 @@
+import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:kilo_iot/core/error/failure.dart';
 import 'package:kilo_iot/core/presentation/base_components/information_block.dart';
 import 'package:kilo_iot/core/presentation/base_components/input_widget.dart';
 import 'package:kilo_iot/core/presentation/base_styles_configuration/material_color_generator.dart';
+import 'package:kilo_iot/features/brokers/domain/entities/broker_entity.dart';
+import 'package:kilo_iot/features/brokers/presentation/pages/broker_info/storages/broker_info_form_state.dart';
 import 'package:kilo_iot/features/brokers/presentation/pages/brokers_list/storages/brokers_list_storage.dart';
 import 'package:kilo_iot/features/devices/presentation/pages/devices_list/storages/brokers_list_storage.dart';
 import 'json_tree_view_store.dart';
@@ -115,6 +119,29 @@ class JsonTreeViewWidget extends StatelessWidget {
                                   Provider.of<BrokersListStorage>(context,
                                       listen: false);
 
+                              if (brokersListStorage.currentBroker == null) {
+                                // create broker
+                                final BrokerFormStorage brokerFormStorage =
+                                    Provider.of<BrokerFormStorage>(context,
+                                        listen: false);
+
+                                Either<Failure, BrokerEntity> data =
+                                    await brokersListStorage.addBroker(
+                                  name: brokerFormStorage.state['name'],
+                                  url: brokerFormStorage.state['address'],
+                                  port: brokerFormStorage.state['port'],
+                                );
+
+                                data.fold((l) {
+                                  print(l.name);
+                                  print(l.description);
+                                }, (BrokerEntity broker) {
+                                  brokersListStorage.setCurrentBroker(broker);
+                                  brokerFormStorage.setFieldState(
+                                      'name', broker.name);
+                                });
+                              }
+
                               devicesListStorage.addDevice(
                                 brokerId: brokersListStorage.currentBroker!.id,
                                 name: jsonTreeViewStore.nameOfDevice,
@@ -184,7 +211,8 @@ class JsonTreeViewNode extends StatelessWidget {
         children: List<Widget>.from(
           jsonData.entries.map((entry) {
             final currentPath = <String>[...path, entry.key];
-            final childIsNotMap = entry.value is! Map;
+            final childIsNotMap = entry.value is! Map && entry.value is! List;
+
             final isOpened =
                 childIsNotMap || jsonTreeViewStore.isOpened(currentPath);
 
@@ -252,7 +280,84 @@ class JsonTreeViewNode extends StatelessWidget {
       );
 
       return Padding(
-        padding: EdgeInsets.only(top: 0.0),
+        padding: const EdgeInsets.only(top: 0.0),
+        child: w,
+      );
+    } else if (jsonData is List) {
+      final w = Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: List<Widget>.generate(jsonData.length, (index) {
+          final value = jsonData[index];
+          final key = index.toString();
+          //
+          final currentPath = <String>[...path, key];
+          final childIsNotMap = value is! Map && value is! List;
+          final isOpened =
+              childIsNotMap || jsonTreeViewStore.isOpened(currentPath);
+
+          return IntrinsicHeight(
+            child: Row(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '$key:',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: MaterialColorGenerator.from(
+                            const Color.fromARGB(255, 12, 97, 107),
+                          )[700]),
+                    ),
+                    Expanded(
+                      child: Container(
+                        width: 1,
+                        margin: const EdgeInsets.symmetric(
+                          vertical: 2.0,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[400],
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 2.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      childIsNotMap
+                          ? Container()
+                          : GestureDetector(
+                              onTap: () {
+                                if (isOpened) {
+                                  jsonTreeViewStore.close(currentPath);
+                                } else {
+                                  jsonTreeViewStore.open(currentPath);
+                                }
+                              },
+                              child: Icon(
+                                isOpened
+                                    ? Icons.arrow_drop_up
+                                    : Icons.arrow_drop_down,
+                                size: 16,
+                              ),
+                            ),
+                      isOpened
+                          ? JsonTreeViewNode(jsonData: value, path: currentPath)
+                          : Container(),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        }),
+      );
+
+      return Padding(
+        padding: const EdgeInsets.only(top: 0.0),
         child: w,
       );
     } else {

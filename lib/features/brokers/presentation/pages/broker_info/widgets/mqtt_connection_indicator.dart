@@ -21,7 +21,7 @@ class MqttConnectionIndicator extends StatelessWidget {
 
       mqttConnectionStorage.mqttConnection = MQTTConnection(
         address: brokerFormStorage.getFieldState('address'),
-        port: int.parse(brokerFormStorage.getFieldState('port')),
+        port: brokerFormStorage.getFieldState('port').isEmpty ? 0 : int.parse(brokerFormStorage.getFieldState('port')),
       );
       await mqttConnectionStorage.connect(
         ttl: mqttConnectionStorage.defaultTTL,

@@ -63,7 +63,7 @@ class DevicesListStorage extends ChangeNotifier {
     });
   }
 
-  void addDevice({
+  Future<Either<Failure, DeviceEntity>> addDevice({
     required EntityKey brokerId,
     required String name,
     required List<String> keys,
@@ -75,7 +75,11 @@ class DevicesListStorage extends ChangeNotifier {
     // try {
     assert(topic.isNotEmpty);
     device = DeviceEntity.create(
-        brokerId: brokerId, name: name, keys: keys, topic: topic);
+      brokerId: brokerId,
+      name: name,
+      keys: keys,
+      topic: topic,
+    );
     // } catch (_) {
     //   //
     //   return;
@@ -86,14 +90,12 @@ class DevicesListStorage extends ChangeNotifier {
       newDevice: device,
     ));
 
-    data.fold((Failure failure) {
-      // erorr
-      print('addd');
-      print(failure.name);
-      print(failure.description);
+    return data.fold((Failure failure) {
+      return Left(
+          Failure(name: 'Cant add device', description: failure.toString()));
     }, (_) async {
-      print('hahahaha');
       getDevices();
+      return Right(device!);
     });
   }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kilo_iot/core/helpers/mqtt_widget_connection.dart';
 import 'package:kilo_iot/core/presentation/json_tree/json_tree_view_store.dart';
 import 'package:kilo_iot/core/presentation/navigation/navigation_store.dart';
+import 'package:kilo_iot/features/brokers/presentation/pages/broker_info/storages/broker_info_form_state.dart';
 import 'package:kilo_iot/features/brokers/presentation/pages/broker_info/storages/mqtt_connection_state.dart';
 import 'package:kilo_iot/features/brokers/presentation/pages/brokers_list/storages/brokers_list_storage.dart';
 import 'package:kilo_iot/features/devices/presentation/pages/devices_list/storages/brokers_list_storage.dart';
@@ -48,6 +49,9 @@ void main() async {
       ChangeNotifierProvider(
         create: (_) => MqttWidgetConnection(),
       ),
+        ChangeNotifierProvider(
+          create: (_) => BrokerFormStorage(),
+        ),
     ],
     child: App(),
   ));

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kilo_iot/features/brokers/domain/entities/broker_entity.dart';
 
 class BrokerFormStorage extends ChangeNotifier {
-  BrokerFormStorage(BrokerEntity? broker) {
+  setStateFromBroker(BrokerEntity? broker) {
     if (broker != null) {
       state['name'] = broker.name;
       state['address'] = broker.url;

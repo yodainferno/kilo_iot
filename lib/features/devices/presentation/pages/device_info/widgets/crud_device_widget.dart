@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
+import 'package:kilo_iot/core/domain/entity_key.dart';
 import 'package:kilo_iot/core/error/failure.dart';
 import 'package:kilo_iot/features/devices/domain/entities/device_entity.dart';
 import 'package:kilo_iot/features/devices/presentation/pages/device_info/storages/device_info_form_state.dart';
@@ -9,6 +10,8 @@ import 'package:provider/provider.dart';
 class CrudDeviceWidget extends StatelessWidget {
   DevicesListStorage? devicesListStorage;
   DeviceInfoFormStorage? deviceFormStorage;
+
+  EntityKey? brokerSavedKeyAfterDeleting; // ключ брокера - который используется для восстановления после удаления
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +28,7 @@ class CrudDeviceWidget extends StatelessWidget {
               Expanded(child: deleteButtonWidget()),
             ]
           : [
-              // Expanded(child: addButtonWidget()),
+              Expanded(child: addButtonWidget()),
             ],
     );
   }
@@ -52,6 +55,31 @@ class CrudDeviceWidget extends StatelessWidget {
           deviceFormStorage!.state['keys'],
         ].toString();
   }
+
+  Widget addButtonWidget() => buttonWidget(
+        text: 'Добавить',
+        onPressed: () async {
+          if (devicesListStorage == null) return;
+
+          Either<Failure, DeviceEntity> data =
+              await devicesListStorage!.addDevice(
+            brokerId: brokerSavedKeyAfterDeleting!,
+            name: deviceFormStorage!.state['name'],
+            keys: deviceFormStorage!.state['keys'].split(' -> '),
+            topic: deviceFormStorage!.state['topic'],
+          );
+
+          data.fold(
+            (l) {
+              print(l.name);
+              print(l.description);
+            },
+            (DeviceEntity device) {
+              devicesListStorage?.setCurrentDevice(device);
+            },
+          );
+        },
+      );
 
   Widget updateButtonWidget() => buttonWidget(
         text: 'Обновить',
@@ -97,6 +125,7 @@ class CrudDeviceWidget extends StatelessWidget {
               print(l.description);
             },
             (_) {
+              brokerSavedKeyAfterDeleting = devicesListStorage!.currentDevice!.brokerId;
               devicesListStorage?.setCurrentDevice(null);
             },
           );
