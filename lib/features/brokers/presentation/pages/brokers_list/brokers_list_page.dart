@@ -47,12 +47,6 @@ class _BrokersListPageState extends State<BrokersListPage> {
             child: Wrap(
               runSpacing: 20,
               children: [
-                // ElevatedButton(
-                //   onPressed: () {
-                //     brokersListStorage.addBroker(url: 'qweqwe', port: '1883');
-                //   },
-                //   child: Text('add random'),
-                // ),
                 ...List.generate(
                   brokersList.length,
                   (index) {
@@ -64,19 +58,21 @@ class _BrokersListPageState extends State<BrokersListPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Broker ID: ${broker.id.key}",
-                              style: const TextStyle(
-                                color: Colors.black,
+                              "${broker.url}:${broker.port}",
+                              style: TextStyle(
+                                color: Colors.grey[900],
                                 fontSize: 18.0,
                               ),
                             ),
-                            const SizedBox(height: 10.0),
+                            const SizedBox(height: 5.0),
                             Text(
-                              "URL: ${broker.url}:${broker.port}",
+                              broker.id.key,
                               style: TextStyle(
-                                color: Colors.grey[700],
+                                color: Colors.grey[500],
+                                fontSize: 14.0,
                               ),
                             ),
+                            // todo name, created
                           ],
                         ),
                       ),
@@ -92,34 +88,6 @@ class _BrokersListPageState extends State<BrokersListPage> {
                     );
                   },
                 ),
-                // ...List.generate(brokersList.length, (index) {
-                //   BrokerEntity broker = brokersList[index];
-                //   return Row(
-                //     children: [
-                //       Container(
-                //         child: Text(broker.port.toString()),
-                //       ),
-                //       ElevatedButton(
-                //         onPressed: () {
-                //           brokersListStorage.deleteBroker(
-                //             id: broker.id,
-                //           );
-                //         },
-                //         child: Text('delete'),
-                //       ),
-                //       ElevatedButton(
-                //         onPressed: () {
-                //           brokersListStorage.updateBroker(
-                //             id: broker.id,
-                //             url: 'qweqwe',
-                //             port: '8080',
-                //           );
-                //         },
-                //         child: Text('update'),
-                //       ),
-                //     ],
-                //   );
-                // }),
               ],
             ),
           ),

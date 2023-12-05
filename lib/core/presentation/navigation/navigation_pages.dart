@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kilo_iot/features/brokers/presentation/pages/brokers_list/brokers_list_page.dart';
-import 'package:kilo_iot/features/devices/presentation/pages/devices_list_page.dart';
+import 'package:kilo_iot/features/devices/presentation/pages/devices_list/devices_list_page.dart';
 import 'package:kilo_iot/features/widgets/presentation/pages/widgets_list_page.dart';
 
 abstract class NavigationPagesInt {
@@ -11,7 +11,7 @@ abstract class NavigationPagesInt {
 
 class NavigationPages implements NavigationPagesInt {
   final Map<String, Widget> _pages = {
-    'feed': const WidgetsListPage(),
+    // 'feed': const WidgetsListPage(),
     'devices': const DevicesListPage(),
     'brokers': const BrokersListPage()
   };

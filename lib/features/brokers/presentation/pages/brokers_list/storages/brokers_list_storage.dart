@@ -120,7 +120,7 @@ class BrokersListStorage extends ChangeNotifier {
       // erorr
       return Left(
         Failure(
-          name: 'Cant add broker',
+          name: 'Cant delete broker',
           description: failure.toString(),
         ),
       );

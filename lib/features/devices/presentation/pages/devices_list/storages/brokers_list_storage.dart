@@ -14,6 +14,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class DevicesListStorage extends ChangeNotifier {
   DevicesListEntity devices = const DevicesListEntity([]);
+  DeviceEntity? currentDevice;
+
+  setCurrentDevice(DeviceEntity? device) {
+    currentDevice = device;
+    notifyListeners();
+  }
 
   GetDevices? getDevicesUsecase;
   AddDevice? addDeviceUsecase;
@@ -51,7 +57,6 @@ class DevicesListStorage extends ChangeNotifier {
       print('get');
       print(failure.name);
       print(failure.description);
-
     }, (DevicesListEntity data) async {
       devices = data;
       notifyListeners();
@@ -67,9 +72,8 @@ class DevicesListStorage extends ChangeNotifier {
 
     DeviceEntity? device;
     // try {
-      assert(topic.isNotEmpty);
-      device =
-          DeviceEntity.create(brokerId: brokerId, keys: keys, topic: topic);
+    assert(topic.isNotEmpty);
+    device = DeviceEntity.create(brokerId: brokerId, keys: keys, topic: topic);
     // } catch (_) {
     //   //
     //   return;
@@ -91,7 +95,7 @@ class DevicesListStorage extends ChangeNotifier {
     });
   }
 
-  void deleteDevice({
+  Future<Either<Failure, void>> deleteDevice({
     required EntityKey id,
   }) async {
     assert(deleteDeviceUsecase != null);
@@ -101,17 +105,21 @@ class DevicesListStorage extends ChangeNotifier {
       deleteId: id,
     ));
 
-    data.fold((Failure failure) {
+    return data.fold((Failure failure) {
       // erorr
-      print('delete');
-      print(failure.name);
-      print(failure.description);
+      return Left(
+        Failure(
+          name: 'Cant delete device',
+          description: failure.toString(),
+        ),
+      );
     }, (_) async {
       getDevices();
+      return const Right(null);
     });
   }
 
-  void updateDevice({
+  Future<Either<Failure, DeviceEntity>> updateDevice({
     required EntityKey id,
     required EntityKey brokerId,
     required List<String> keys,
@@ -124,9 +132,10 @@ class DevicesListStorage extends ChangeNotifier {
       assert(topic.isNotEmpty);
       device = DeviceEntity.withId(
           id: id, brokerId: brokerId, keys: keys, topic: topic);
-    } catch (_) {
+    } catch (error) {
       //
-      return;
+      return Left(
+          Failure(name: 'Cant update device', description: error.toString()));
     }
 
     Either<Failure, void> data = await updateDeviceUsecase!(UpdateParams(
@@ -134,13 +143,12 @@ class DevicesListStorage extends ChangeNotifier {
       updatedDevice: device,
     ));
 
-    data.fold((Failure failure) {
-      // erorr
-      print('update');
-      print(failure.name);
-      print(failure.description);
+    return data.fold((Failure failure) {
+      return Left(
+          Failure(name: 'Cant add device', description: failure.toString()));
     }, (_) async {
       getDevices();
+      return Right(device!);
     });
   }
 }

@@ -9,10 +9,10 @@ import 'package:provider/provider.dart';
 final navigationPages = NavigationPages();
 
 const List<Map> bottomNavigationItems = [
-  {
-    'label': 'Feed',
-    'icon': Icons.home,
-  },
+  // {
+  //   'label': 'Feed',
+  //   'icon': Icons.home,
+  // },
   {
     'label': 'Devices',
     'icon': Icons.thermostat,

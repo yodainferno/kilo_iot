@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:kilo_iot/core/domain/entity_key.dart';
+import 'package:kilo_iot/core/domain/mqtt_data_source.dart';
 import 'package:kilo_iot/core/presentation/base_components/information_block.dart';
+import 'package:kilo_iot/features/brokers/presentation/pages/broker_info/storages/mqtt_connection_state.dart';
 import 'package:kilo_iot/features/devices/domain/entities/device_entity.dart';
-import 'package:kilo_iot/features/devices/presentation/storages/brokers_list_storage.dart';
+import 'package:kilo_iot/features/devices/presentation/pages/device_info/device_page.dart';
+import 'package:kilo_iot/features/devices/presentation/pages/devices_list/storages/brokers_list_storage.dart';
+import 'package:mqtt_client/mqtt_client.dart';
 import 'package:provider/provider.dart';
 
 class DevicesListPage extends StatefulWidget {
@@ -13,8 +16,29 @@ class DevicesListPage extends StatefulWidget {
 }
 
 class _DevicesListPageState extends State<DevicesListPage> {
+  connect(MqttConnectionStorage mqttConnectionStorage) async {
+    print('1231232');
+    mqttConnectionStorage.mqttConnection = MQTTConnection(
+      address: 'mqtt.34devs.ru',
+      port: 1883,
+    );
+    await mqttConnectionStorage.connect();
+    mqttConnectionStorage.mqttConnection?.listenTopics(
+      callBack: (MqttReceivedMessage<MqttMessage?> data) {
+        print(data.topic);
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final MqttConnectionStorage mqttConnectionStorage =
+        Provider.of<MqttConnectionStorage>(context, listen: true);
+
+    if (mqttConnectionStorage.mqttConnection?.isConnected != true) {
+      connect(mqttConnectionStorage);
+    }
+
     final DevicesListStorage devicesListStorage =
         Provider.of<DevicesListStorage>(context, listen: true);
 
@@ -23,19 +47,19 @@ class _DevicesListPageState extends State<DevicesListPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Devices'),
-        actions: [
-          IconButton(
-            onPressed: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => const BrokerInfoPage(),
-              //   ),
-              // );
-            },
-            icon: const Icon(Icons.add),
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     onPressed: () {
+        //       // Navigator.push(
+        //       //   context,
+        //       //   MaterialPageRoute(
+        //       //     builder: (context) => const BrokerInfoPage(),
+        //       //   ),
+        //       // );
+        //     },
+        //     icon: const Icon(Icons.add),
+        //   ),
+        // ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -47,18 +71,6 @@ class _DevicesListPageState extends State<DevicesListPage> {
             child: Wrap(
               runSpacing: 20,
               children: [
-                // ElevatedButton(
-                //   onPressed: () {
-                //     print('aaaaaa');
-                //     devicesListStorage.addDevice(
-                //       brokerId: EntityKey(key: 'id-123'),
-                //       keys: ['temp', 'data'],
-                //       topic: '#',
-                //     );
-                //   },
-                //   child: Text('add random'),
-                // ),
-
                 ...List.generate(
                   devicesList.length,
                   (index) {
@@ -70,37 +82,47 @@ class _DevicesListPageState extends State<DevicesListPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Device ID: ${device.id.key}",
-                              style: const TextStyle(
-                                color: Colors.black,
+                              "Keys: ${device.keys.join(' -> ')}",
+                              style: TextStyle(
+                                color: Colors.grey[900],
                                 fontSize: 18.0,
                               ),
                             ),
-                            const SizedBox(height: 10.0),
-                            Text(
-                              "Broker ID ${device.brokerId.key}",
-                              style: TextStyle(
-                                color: Colors.grey[700],
-                              ),
-                            ),
                             const SizedBox(height: 3.0),
                             Text(
-                              "Keys ${device.keys}",
+                              "Topic: ${device.topic}",
                               style: TextStyle(
-                                color: Colors.grey[700],
+                                color: Colors.grey[900],
+                                fontSize: 18.0,
                               ),
                             ),
-                            const SizedBox(height: 3.0),
+                            const SizedBox(height: 5.0),
                             Text(
-                              "Topic ${device.topic}",
+                              "${device.id.key}",
                               style: TextStyle(
-                                color: Colors.grey[700],
+                                color: Colors.grey[500],
+                                fontSize: 14.0,
+                              ),
+                            ),
+                            Text(
+                              "broker: ${device.brokerId.key}",
+                              style: TextStyle(
+                                color: Colors.grey[500],
+                                fontSize: 14.0,
                               ),
                             ),
                           ],
                         ),
                       ),
-                      onTap: () {},
+                      onTap: () {
+                        devicesListStorage.setCurrentDevice(device);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const DeviceInfoPage(),
+                          ),
+                        );
+                      },
                     );
                   },
                 ),

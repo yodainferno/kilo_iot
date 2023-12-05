@@ -14,14 +14,13 @@ class BrokerInfoPage extends StatelessWidget {
   // build
   @override
   Widget build(BuildContext context) {
-    BrokersListStorage brokersListStorage = Provider.of<BrokersListStorage>(context, listen: false);
+    BrokersListStorage brokersListStorage =
+        Provider.of<BrokersListStorage>(context, listen: false);
 
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (_) => BrokerFormStorage(
-            brokersListStorage.currentBroker
-          ),
+          create: (_) => BrokerFormStorage(brokersListStorage.currentBroker),
         ),
         ChangeNotifierProvider(
           create: (_) => TabStorage(),
@@ -29,21 +28,16 @@ class BrokerInfoPage extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => MessagesStorage(),
         ),
-        ChangeNotifierProvider(
-          create: (_) => MqttConnectionStorage(),
-        ),
       ],
       child: Scaffold(
-        body: Scaffold(
-          appBar: AppBar(
-            title: const Text('Broker'),
-          ),
-          body: Stack(
-            children: [
-              BrokerInfoPageView(),
-              const PageIndicatorWidget(),
-            ],
-          ),
+        appBar: AppBar(
+          title: const Text('Broker'),
+        ),
+        body: Stack(
+          children: [
+            BrokerInfoPageView(),
+            const PageIndicatorWidget(),
+          ],
         ),
       ),
     );

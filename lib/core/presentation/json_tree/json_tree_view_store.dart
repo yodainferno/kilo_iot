@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kilo_iot/core/domain/entity_key.dart';
 
 abstract class JsonTreeViewStoreInt {
   // data
@@ -6,8 +7,8 @@ abstract class JsonTreeViewStoreInt {
   set jsonData(dynamic newData);
 
   // path to seleted key
-  List get path;
-  set path(List path);
+  List<String> get path;
+  set path(List<String> path);
 
   // opened nested keys
   Map get openedKeys;
@@ -20,7 +21,6 @@ class JsonTreeViewStore extends ChangeNotifier implements JsonTreeViewStoreInt {
   // data
   // state
   dynamic _jsonData = {};
-  Map broker = {};
 
   // actions
   @override
@@ -33,7 +33,6 @@ class JsonTreeViewStore extends ChangeNotifier implements JsonTreeViewStoreInt {
     topic = '';
     _path = [];
     _openedKeys = {};
-    broker = {};
 
     inputValue = '';
     _nameOfDevice = '';
@@ -43,7 +42,7 @@ class JsonTreeViewStore extends ChangeNotifier implements JsonTreeViewStoreInt {
 
   // path to seleted key
   // state
-  List _path = [];
+  List<String> _path = [];
   String topic = '';
   //
   String inputValue = '';
@@ -56,10 +55,10 @@ class JsonTreeViewStore extends ChangeNotifier implements JsonTreeViewStoreInt {
 
   // actions
   @override
-  List get path => _path;
+  List<String> get path => _path;
 
   @override
-  set path(List path) {
+  set path(List<String> path) {
     _path = path;
     notifyListeners();
   }

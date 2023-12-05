@@ -1,13 +1,12 @@
-import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:kilo_iot/core/presentation/base_components/information_block.dart';
 import 'package:kilo_iot/core/presentation/base_components/input_widget.dart';
 import 'package:kilo_iot/core/presentation/base_styles_configuration/material_color_generator.dart';
+import 'package:kilo_iot/features/brokers/presentation/pages/brokers_list/storages/brokers_list_storage.dart';
+import 'package:kilo_iot/features/devices/presentation/pages/devices_list/storages/brokers_list_storage.dart';
 import 'json_tree_view_store.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 String selectedTreePathToString(List pathData) {
   return pathData.join(' -> ');
@@ -60,36 +59,34 @@ class JsonTreeViewWidget extends StatelessWidget {
                 child: Column(
                   children: [
                     InputWidget(
-                      label: 'Ключи значения (разделение через "->")',
-                      onChanged: (value) {
-                        jsonTreeViewStore.inputValue = value;
-                        List<String> itemsRaw = value.split('->');
-                        List<String> items = List<String>.from(
-                          itemsRaw.map(
-                            (item) => item.trim(),
-                          ),
-                        );
+                        label: 'Ключи значения (разделение через "->")',
+                        onChanged: (value) {
+                          jsonTreeViewStore.inputValue = value;
+                          List<String> itemsRaw = value.split('->');
+                          List<String> items = List<String>.from(
+                            itemsRaw.map(
+                              (item) => item.trim(),
+                            ),
+                          );
 
-                        if (jsonTreeViewStore.isValueExistInJsonData(items)) {
-                          if (!listEquals(jsonTreeViewStore.path, items)) {
-                            jsonTreeViewStore.path = items;
+                          if (jsonTreeViewStore.isValueExistInJsonData(items)) {
+                            if (!listEquals(jsonTreeViewStore.path, items)) {
+                              jsonTreeViewStore.path = items;
+                            }
+                          } else {
+                            jsonTreeViewStore.path = [];
                           }
-                        } else {
-                          jsonTreeViewStore.path = [];
-                        }
-                      },
-                      initialValue: jsonTreeViewStore.inputValue
-                    ),
+                        },
+                        initialValue: jsonTreeViewStore.inputValue),
                     const SizedBox(
                       height: 10.0,
                     ),
-                    InputWidget(
-                      label: 'Название датчика',
-                      onChanged: (value) {
-                        jsonTreeViewStore.nameOfDevice = value;
-                      },
-                      initialValue: jsonTreeViewStore.nameOfDevice
-                    ),
+                    // InputWidget(
+                    //     label: 'Название датчика',
+                    //     onChanged: (value) {
+                    //       jsonTreeViewStore.nameOfDevice = value;
+                    //     },
+                    //     initialValue: jsonTreeViewStore.nameOfDevice),
                     const SizedBox(
                       height: 10.0,
                     ),
@@ -101,29 +98,43 @@ class JsonTreeViewWidget extends StatelessWidget {
                           borderRadius: BorderRadius.all(Radius.circular(10.0)),
                         ),
                       ),
-                      onPressed: validate(jsonTreeViewStore) ? () async {
-                        SharedPreferences preferences = await SharedPreferences.getInstance();
+                      onPressed: validate(jsonTreeViewStore)
+                          ? () async {
+                              final DevicesListStorage devicesListStorage =
+                                  Provider.of<DevicesListStorage>(context,
+                                      listen: false);
+                                      final BrokersListStorage brokersListStorage =
+                                  Provider.of<BrokersListStorage>(context,
+                                      listen: false);
 
-                        final devicesString = preferences.getString('devices') ?? '[]';
-                        final devices = jsonDecode(devicesString);
+                              devicesListStorage.addDevice(
+                                brokerId: brokersListStorage.currentBroker!.id,
+                                keys: jsonTreeViewStore.path,
+                                topic: jsonTreeViewStore.topic,
+                              );
 
-                        devices.add({
-                          'broker_settings': {
-                            'url': jsonTreeViewStore.broker['url'],
-                            'port': jsonTreeViewStore.broker['port'],
-                            'topic': jsonTreeViewStore.topic,
-                          },
-                          'keys': jsonTreeViewStore.path,
-                          'name': jsonTreeViewStore.nameOfDevice,
-                        });
-                        
-            
-                        preferences.setString('devices', jsonEncode(devices));
+                              // SharedPreferences preferences = await SharedPreferences.getInstance();
 
-                        jsonTreeViewStore.nameOfDevice = '';
-                        jsonTreeViewStore.path = [];
-                        jsonTreeViewStore.inputValue = '';
-                      } : null,
+                              // final devicesString = preferences.getString('devices') ?? '[]';
+                              // final devices = jsonDecode(devicesString);
+
+                              // devices.add({
+                              //   'broker_settings': {
+                              //     'url': jsonTreeViewStore.broker['url'],
+                              //     'port': jsonTreeViewStore.broker['port'],
+                              //     'topic': jsonTreeViewStore.topic,
+                              //   },
+                              //   'keys': jsonTreeViewStore.path,
+                              //   'name': jsonTreeViewStore.nameOfDevice,
+                              // });
+
+                              // preferences.setString('devices', jsonEncode(devices));
+
+                              // jsonTreeViewStore.nameOfDevice = '';
+                              jsonTreeViewStore.path = [];
+                              jsonTreeViewStore.inputValue = '';
+                            }
+                          : null,
                       child: const Text("Добавить датчик"),
                     ),
                   ],
@@ -135,14 +146,16 @@ class JsonTreeViewWidget extends StatelessWidget {
       ),
     );
   }
+
   bool validate(JsonTreeViewStore jsonTreeViewStore) {
-    return jsonTreeViewStore.path.isNotEmpty && jsonTreeViewStore.nameOfDevice.isNotEmpty;
+    return jsonTreeViewStore.path.isNotEmpty;// &&
+        jsonTreeViewStore.nameOfDevice.isNotEmpty;
   }
 }
 
 class JsonTreeViewNode extends StatelessWidget {
   final dynamic jsonData;
-  final List path;
+  final List<String> path;
 
   const JsonTreeViewNode({
     Key? key,
@@ -161,7 +174,7 @@ class JsonTreeViewNode extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: List<Widget>.from(
           jsonData.entries.map((entry) {
-            final currentPath = [...path, entry.key];
+            final currentPath = <String>[...path, entry.key];
             final childIsNotMap = entry.value is! Map;
             final isOpened =
                 childIsNotMap || jsonTreeViewStore.isOpened(currentPath);
