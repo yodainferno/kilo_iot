@@ -65,6 +65,7 @@ class DevicesListStorage extends ChangeNotifier {
 
   void addDevice({
     required EntityKey brokerId,
+    required String name,
     required List<String> keys,
     required String topic,
   }) async {
@@ -73,7 +74,8 @@ class DevicesListStorage extends ChangeNotifier {
     DeviceEntity? device;
     // try {
     assert(topic.isNotEmpty);
-    device = DeviceEntity.create(brokerId: brokerId, keys: keys, topic: topic);
+    device = DeviceEntity.create(
+        brokerId: brokerId, name: name, keys: keys, topic: topic);
     // } catch (_) {
     //   //
     //   return;
@@ -122,6 +124,7 @@ class DevicesListStorage extends ChangeNotifier {
   Future<Either<Failure, DeviceEntity>> updateDevice({
     required EntityKey id,
     required EntityKey brokerId,
+    required String name,
     required List<String> keys,
     required String topic,
   }) async {
@@ -131,7 +134,12 @@ class DevicesListStorage extends ChangeNotifier {
     try {
       assert(topic.isNotEmpty);
       device = DeviceEntity.withId(
-          id: id, brokerId: brokerId, keys: keys, topic: topic);
+        id: id,
+        brokerId: brokerId,
+        name: name,
+        keys: keys,
+        topic: topic,
+      );
     } catch (error) {
       //
       return Left(

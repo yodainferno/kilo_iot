@@ -43,10 +43,14 @@ class CrudDeviceWidget extends StatelessWidget {
 
     return [
           devicesListStorage!.currentDevice!.topic,
+          devicesListStorage!.currentDevice!.name,
           devicesListStorage!.currentDevice!.keys.join(' -> ')
         ].toString() !=
-        [deviceFormStorage!.state['topic'], deviceFormStorage!.state['keys']]
-            .toString();
+        [
+          deviceFormStorage!.state['topic'],
+          deviceFormStorage!.state['name'],
+          deviceFormStorage!.state['keys'],
+        ].toString();
   }
 
   Widget updateButtonWidget() => buttonWidget(
@@ -56,9 +60,11 @@ class CrudDeviceWidget extends StatelessWidget {
             : () async {
                 if (devicesListStorage == null) return;
 
-                Either<Failure, DeviceEntity> data = await devicesListStorage!.updateDevice(
+                Either<Failure, DeviceEntity> data =
+                    await devicesListStorage!.updateDevice(
                   id: devicesListStorage!.currentDevice!.id,
                   brokerId: devicesListStorage!.currentDevice!.brokerId,
+                  name: deviceFormStorage!.state['name'],
                   keys: deviceFormStorage!.state['keys'].split(' -> '),
                   topic: deviceFormStorage!.state['topic'],
                 );

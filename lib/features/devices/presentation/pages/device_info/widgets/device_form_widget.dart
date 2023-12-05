@@ -8,7 +8,7 @@ class DeviceFormWidget extends StatelessWidget {
   DeviceFormWidget({super.key});
 
   final Map<String, Map<String, String?>> formFields = {
-    // 'name': {'label': 'Название брокера'},
+    'name': {'label': 'Название брокера'},
     'topic': {'label': 'topic'},
     'keys': {'label': 'Ключи'},
   };

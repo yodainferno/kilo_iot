@@ -4,11 +4,11 @@ import 'package:kilo_iot/features/devices/domain/entities/device_entity.dart';
 class DeviceInfoFormStorage extends ChangeNotifier {
   DeviceInfoFormStorage(DeviceEntity? device) {
     if (device != null) {
-      // state['name'] = 'Лалала';
+      state['name'] = device.name;
       state['keys'] = device.keys.join(' -> ');
       state['topic'] = device.topic;
     } else {
-      // state['name'] = '';
+      state['name'] = '';
       state['keys'] = '';
       state['topic'] = '';
     }
@@ -25,7 +25,7 @@ class DeviceInfoFormStorage extends ChangeNotifier {
   }
 
   final Map<String, dynamic> state = {
-    // 'name': 'Test broker',
+    'name': '',
     'keys': '',
     'topic': '',
   };

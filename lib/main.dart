@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kilo_iot/core/helpers/mqtt_widget_connection.dart';
 import 'package:kilo_iot/core/presentation/json_tree/json_tree_view_store.dart';
 import 'package:kilo_iot/core/presentation/navigation/navigation_store.dart';
 import 'package:kilo_iot/features/brokers/presentation/pages/broker_info/storages/mqtt_connection_state.dart';
@@ -45,10 +46,10 @@ void main() async {
         create: (_) => JsonTreeViewStore(),
       ),
       ChangeNotifierProvider(
-        create: (_) => MqttConnectionStorage(),
+        create: (_) => MqttWidgetConnection(),
       ),
     ],
-    child: const App(),
+    child: App(),
   ));
 
   clearStorage(); // debug

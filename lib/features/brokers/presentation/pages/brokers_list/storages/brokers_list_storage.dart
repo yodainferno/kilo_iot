@@ -8,6 +8,7 @@ import 'package:kilo_iot/features/brokers/domain/entities/broker_entity.dart';
 import 'package:kilo_iot/features/brokers/domain/entities/brokers_list_entity.dart';
 import 'package:kilo_iot/features/brokers/domain/usecases/add_broker_usecase.dart';
 import 'package:kilo_iot/features/brokers/domain/usecases/delete_broker_usecase.dart';
+import 'package:kilo_iot/features/brokers/domain/usecases/get_broker_by_id_usecase.dart';
 import 'package:kilo_iot/features/brokers/domain/usecases/get_brokers_usecase.dart';
 import 'package:kilo_iot/features/brokers/domain/usecases/update_broker_usecase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,6 +23,7 @@ class BrokersListStorage extends ChangeNotifier {
   }
 
   GetBrokers? getBrokersUsecase;
+  GetBrokerById? getBrokerByIdUsecase;
   AddBroker? addBrokerUsecase;
   DeleteBroker? deleteBrokerUsecase;
   UpdateBroker? updateBrokerUsecase;
@@ -41,6 +43,7 @@ class BrokersListStorage extends ChangeNotifier {
     );
 
     getBrokersUsecase = GetBrokers(repositoryInstance);
+    getBrokerByIdUsecase = GetBrokerById(repositoryInstance);
     addBrokerUsecase = AddBroker(repositoryInstance);
     deleteBrokerUsecase = DeleteBroker(repositoryInstance);
     updateBrokerUsecase = UpdateBroker(repositoryInstance);
@@ -60,11 +63,26 @@ class BrokersListStorage extends ChangeNotifier {
     });
   }
 
+  Future<BrokerEntity?> getBrokerById(EntityKey id) async {
+    assert(getBrokerByIdUsecase != null);
+
+    Either<Failure, BrokerEntity> data =
+        await getBrokerByIdUsecase!(FindParams(findId: id));
+
+    return data.fold((Failure failure) {
+      // erorr
+      return null;
+    }, (BrokerEntity data) async {
+      return data;
+    });
+  }
+
   // void GetBrokerById() {
   //   GetBrokerById
   // }
 
   Future<Either<Failure, BrokerEntity>> addBroker({
+    required String name,
     required String url,
     required String port,
   }) async {
@@ -75,7 +93,11 @@ class BrokersListStorage extends ChangeNotifier {
       assert(url.isNotEmpty);
 
       final portInt = int.parse(port);
-      broker = BrokerEntity.create(url: url, port: portInt);
+      broker = BrokerEntity.create(
+        name: name.isEmpty ? 'Без имени' : name,
+        url: url,
+        port: portInt,
+      );
     } catch (error) {
       //
       return Left(
@@ -132,6 +154,7 @@ class BrokersListStorage extends ChangeNotifier {
 
   Future<Either<Failure, BrokerEntity>> updateBroker({
     required EntityKey id,
+    required String name,
     required String url,
     required String port,
   }) async {
@@ -142,7 +165,12 @@ class BrokersListStorage extends ChangeNotifier {
       assert(url.isNotEmpty);
 
       final portInt = int.parse(port);
-      broker = BrokerEntity.withId(id: id, url: url, port: portInt);
+      broker = BrokerEntity.withId(
+        id: id,
+        name: name.isEmpty ? 'Без имени' : name,
+        url: url,
+        port: portInt,
+      );
     } catch (error) {
       //
       return Left(

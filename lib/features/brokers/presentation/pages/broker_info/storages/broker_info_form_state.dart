@@ -4,11 +4,11 @@ import 'package:kilo_iot/features/brokers/domain/entities/broker_entity.dart';
 class BrokerFormStorage extends ChangeNotifier {
   BrokerFormStorage(BrokerEntity? broker) {
     if (broker != null) {
-      // state['name'] = 'Лалала';
+      state['name'] = broker.name;
       state['address'] = broker.url;
       state['port'] = broker.port.toString();
     } else {
-      // state['name'] = '';
+      state['name'] = '';
       state['address'] = '';
       state['port'] = '';
     }
@@ -25,8 +25,8 @@ class BrokerFormStorage extends ChangeNotifier {
   }
 
   final Map<String, dynamic> state = {
-    // 'name': 'Test broker',
-    'address': 'mqtt.34devs.ru',
-    'port': '1883',
+    'name': '',
+    'address': '',
+    'port': '',
   };
 }

@@ -28,10 +28,13 @@ class BrokerInfoPage extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => MessagesStorage(),
         ),
+        ChangeNotifierProvider(
+          create: (_) => MqttConnectionStorage(),
+        ),
       ],
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Broker'),
+          title: Text(brokersListStorage.currentBroker != null ? 'Брокер' : 'Новый брокер'),
         ),
         body: Stack(
           children: [

@@ -5,11 +5,13 @@ class DeviceModel extends DeviceEntity {
   DeviceModel.withId({
     required super.id,
     required super.brokerId,
+    required super.name,
     required super.keys,
     required super.topic,
   }) : super.withId();
   DeviceModel.create({
     required super.brokerId,
+    required super.name,
     required super.keys,
     required super.topic,
   }) : super.create();
@@ -18,32 +20,44 @@ class DeviceModel extends DeviceEntity {
       : super.withId(
           id: entity.id,
           brokerId: entity.brokerId,
+          name: entity.name,
           keys: entity.keys,
           topic: entity.topic,
         ) {
     DeviceModel.withId(
-        id: entity.id,
-        brokerId: entity.brokerId,
-        keys: entity.keys,
-        topic: entity.topic);
+      id: entity.id,
+      brokerId: entity.brokerId,
+      name: entity.name,
+      keys: entity.keys,
+      topic: entity.topic,
+    );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id.key,
       'broker_id': brokerId.key,
+      'name': name,
       'keys': keys,
       'topic': topic,
     };
   }
 
   factory DeviceModel.fromJson(Map<String, dynamic> json) {
-
-    List<String> keys = [...(json['keys'] is List ? json['keys'].map((key) => key.toString()).toList() : [])];
+    List<String> keys = [
+      ...(json['keys'] is List
+          ? json['keys'].map((key) => key.toString()).toList()
+          : [])
+    ];
 
     return DeviceModel.withId(
-      id: EntityKey(key: json['id'] is String ? json['id'] as String : ''),
-      brokerId: EntityKey(key: json['broker_id'] is String ? json['broker_id'] as String : ''),
+      id: EntityKey(
+        key: json['id'] is String ? json['id'] as String : '',
+      ),
+      brokerId: EntityKey(
+        key: json['broker_id'] is String ? json['broker_id'] as String : '',
+      ),
+      name: json['name'],
       keys: keys,
       topic: json['topic'] is String ? json['topic'] as String : '',
     );

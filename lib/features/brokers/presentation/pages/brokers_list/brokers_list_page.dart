@@ -22,10 +22,11 @@ class _BrokersListPageState extends State<BrokersListPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Brokers'),
+        title: const Text('Список брокеров'),
         actions: [
           IconButton(
             onPressed: () {
+              brokersListStorage.setCurrentBroker(null);
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -45,54 +46,76 @@ class _BrokersListPageState extends State<BrokersListPage> {
               horizontal: 15.0,
             ),
             child: Wrap(
-              runSpacing: 20,
-              children: [
-                ...List.generate(
-                  brokersList.length,
-                  (index) {
-                    BrokerEntity broker = brokersList[index];
+                runSpacing: 20,
+                children: brokersList.isEmpty
+                    ? [
+                        noDataWidget(),
+                      ]
+                    : brokersListWidget(context)),
+          ),
+        ),
+      ),
+    );
+  }
 
-                    return GestureDetector(
-                      child: InformationBlock(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "${broker.url}:${broker.port}",
-                              style: TextStyle(
-                                color: Colors.grey[900],
-                                fontSize: 18.0,
-                              ),
-                            ),
-                            const SizedBox(height: 5.0),
-                            Text(
-                              broker.id.key,
-                              style: TextStyle(
-                                color: Colors.grey[500],
-                                fontSize: 14.0,
-                              ),
-                            ),
-                            // todo name, created
-                          ],
-                        ),
-                      ),
-                      onTap: () {
-                        brokersListStorage.setCurrentBroker(broker);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const BrokerInfoPage(),
-                          ),
-                        );
-                      },
-                    );
-                  },
+  Widget noDataWidget() {
+    return Container(
+      alignment: Alignment.center,
+      child: Text(
+        'Вы еще не добавили ни одного брокера',
+        style: TextStyle(
+          fontSize: 14.0,
+          color: Colors.grey[700],
+        ),
+      ),
+    );
+  }
+
+  List<Widget> brokersListWidget(BuildContext context) {
+    final BrokersListStorage brokersListStorage =
+        Provider.of<BrokersListStorage>(context, listen: true);
+
+    final List<BrokerEntity> brokersList = brokersListStorage.brokers.brokers;
+
+    return List.generate(
+      brokersList.length,
+      (index) {
+        BrokerEntity broker = brokersList[index];
+
+        return GestureDetector(
+          child: InformationBlock(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  broker.name,
+                  style: TextStyle(
+                    fontSize: 15.0,
+                    color: Colors.grey[700],
+                  ),
+                ),
+                const SizedBox(height: 5.0),
+                Text(
+                  "${broker.url}:${broker.port}",
+                  style: const TextStyle(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ],
             ),
           ),
-        ),
-      ),
+          onTap: () {
+            brokersListStorage.setCurrentBroker(broker);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const BrokerInfoPage(),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }

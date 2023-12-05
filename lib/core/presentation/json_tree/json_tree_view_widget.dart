@@ -38,15 +38,22 @@ class JsonTreeViewWidget extends StatelessWidget {
                 child: InformationBlock(
                   child: Column(
                     children: [
-                      JsonTreeViewNode(
-                        jsonData: jsonData,
-                        path: const [],
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Container(
+                          constraints: BoxConstraints(
+                              minWidth: MediaQuery.of(context).size.width),
+                          child: JsonTreeViewNode(
+                            jsonData: jsonData,
+                            path: const [],
+                          ),
+                        ),
                       ),
                       const SizedBox(
                         height: 20.0,
                       ),
                       Text(
-                        'Click to any value to add device keys path',
+                        'Нажмите на любое значение',
                         style:
                             TextStyle(color: Colors.grey[700], fontSize: 12.0),
                       )
@@ -81,12 +88,13 @@ class JsonTreeViewWidget extends StatelessWidget {
                     const SizedBox(
                       height: 10.0,
                     ),
-                    // InputWidget(
-                    //     label: 'Название датчика',
-                    //     onChanged: (value) {
-                    //       jsonTreeViewStore.nameOfDevice = value;
-                    //     },
-                    //     initialValue: jsonTreeViewStore.nameOfDevice),
+                    InputWidget(
+                      label: 'Название датчика',
+                      onChanged: (value) {
+                        jsonTreeViewStore.nameOfDevice = value;
+                      },
+                      initialValue: jsonTreeViewStore.nameOfDevice,
+                    ),
                     const SizedBox(
                       height: 10.0,
                     ),
@@ -103,12 +111,13 @@ class JsonTreeViewWidget extends StatelessWidget {
                               final DevicesListStorage devicesListStorage =
                                   Provider.of<DevicesListStorage>(context,
                                       listen: false);
-                                      final BrokersListStorage brokersListStorage =
+                              final BrokersListStorage brokersListStorage =
                                   Provider.of<BrokersListStorage>(context,
                                       listen: false);
 
                               devicesListStorage.addDevice(
                                 brokerId: brokersListStorage.currentBroker!.id,
+                                name: jsonTreeViewStore.nameOfDevice,
                                 keys: jsonTreeViewStore.path,
                                 topic: jsonTreeViewStore.topic,
                               );
@@ -130,7 +139,7 @@ class JsonTreeViewWidget extends StatelessWidget {
 
                               // preferences.setString('devices', jsonEncode(devices));
 
-                              // jsonTreeViewStore.nameOfDevice = '';
+                              jsonTreeViewStore.nameOfDevice = '';
                               jsonTreeViewStore.path = [];
                               jsonTreeViewStore.inputValue = '';
                             }
@@ -148,7 +157,7 @@ class JsonTreeViewWidget extends StatelessWidget {
   }
 
   bool validate(JsonTreeViewStore jsonTreeViewStore) {
-    return jsonTreeViewStore.path.isNotEmpty;// &&
+    return jsonTreeViewStore.path.isNotEmpty &&
         jsonTreeViewStore.nameOfDevice.isNotEmpty;
   }
 }

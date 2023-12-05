@@ -51,7 +51,7 @@ class MessagesListWidget extends StatelessWidget {
                                 color: Colors.grey[700], fontSize: 16),
                           ),
                           Text(
-                            "Topic: ${messageData.topic}",
+                            "Канал: ${messageData.topic}",
                             style: const TextStyle(fontSize: 16),
                           ),
                         ],

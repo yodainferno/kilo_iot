@@ -7,7 +7,6 @@ import 'package:kilo_iot/features/brokers/domain/entities/broker_entity.dart';
 import 'package:kilo_iot/features/brokers/domain/entities/brokers_list_entity.dart';
 import 'package:kilo_iot/features/brokers/domain/repository/broker_repository.dart';
 
-
 class GetBrokerById implements UseCase<BrokerEntity, FindParams> {
   final BrokersListRepository repository;
 
@@ -22,7 +21,7 @@ class GetBrokerById implements UseCase<BrokerEntity, FindParams> {
       return Left(failure);
     }, (BrokersListEntity brokersData) {
       int foundEntity = brokersData.brokers
-          .indexWhere((broker) => broker.id == params.findId);
+          .indexWhere((BrokerEntity broker) => broker.id == params.findId);
       if (foundEntity == -1) {
         return Left(Failure(name: 'Cant find item'));
       }

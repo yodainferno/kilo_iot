@@ -4,11 +4,13 @@ class InputWidget extends StatefulWidget {
   final ValueChanged<String>? onChanged;
   final String? initialValue;
   final String? label;
+  final bool disabled;
 
   const InputWidget({
     Key? key,
-    required this.onChanged,
+    this.onChanged,
     required this.initialValue,
+    this.disabled = false,
     this.label,
   }) : super(key: key);
 
@@ -54,6 +56,7 @@ class InputWidgetState extends State<InputWidget> {
   Widget build(BuildContext context) {
     return TextField(
       controller: _textEditingController,
+      enabled: !widget.disabled,
       decoration: InputDecoration(
         labelText: widget.label,
         border: OutlineInputBorder(
