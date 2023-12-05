@@ -66,13 +66,27 @@ class MqttWidgetConnection extends ChangeNotifier {
     if (!storeData.containsKey(key)) {
       storeData[key] = {};
     }
-    storeData[key]![topic] = data;
+    if (!storeData[key]!.containsKey(topic)) {
+      storeData[key]![topic] = [];
+    }
+    (storeData[key]![topic] as List).add(data);
     notifyListeners();
   }
 
-  String getDataByTopicKeys(String key, String topic, List<String> keys) {
-    if (storeData[key] == null || storeData[key]?[topic] == null) return '';
-    return _getDataByKeys(storeData[key]?[topic], keys).toString();
+  List getDataByTopicKeys(String key, String topic, List<String> keys) {
+    if (storeData[key] == null || storeData[key]?[topic] == null) return [];
+    List data = storeData[key]?[topic];
+    final firstData = data.isEmpty ? null : _getDataByKeys(data[0], keys);
+
+    return firstData is num
+        ? List<num>.generate(
+            data.length,
+            (index) => _getDataByKeys(data[index], keys),
+          )
+        : List<dynamic>.generate(
+            data.length,
+            (index) => _getDataByKeys(data[index], keys),
+          );
   }
 
   dynamic _getDataByKeys(dynamic object, List<String> keys) {

@@ -1,3 +1,4 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:kilo_iot/core/helpers/mqtt_widget_connection.dart';
 import 'package:kilo_iot/core/presentation/base_components/information_block.dart';
@@ -35,7 +36,7 @@ class _DevicesListPageState extends State<DevicesListPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Списко датчиков'),
+        title: const Text('Список датчиков'),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -91,6 +92,15 @@ class _DevicesListPageState extends State<DevicesListPage> {
         final brokerKey =
             brokerData != null ? "${brokerData.url}:${brokerData.port}" : "";
 
+        final deviceData = mqttWidgetConnection.getDataByTopicKeys(
+          brokerKey,
+          device.topic,
+          device.keys,
+        );
+
+        final deviceDataLast =
+            deviceData.isEmpty ? '' : deviceData[deviceData.length - 1];
+
         return GestureDetector(
           child: InformationBlock(
             child: Stack(
@@ -106,14 +116,18 @@ class _DevicesListPageState extends State<DevicesListPage> {
                       ),
                     ),
                     const SizedBox(height: 5.0),
-                    Text(
-                      mqttWidgetConnection.getDataByTopicKeys(
-                          brokerKey, device.topic, device.keys),
-                      style: const TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                    deviceData is List<num>
+                        ? Container(
+                            margin: const EdgeInsets.only(top: 25),
+                            child: chart(deviceData),
+                          )
+                        : Text(
+                            deviceDataLast.toString(),
+                            style: const TextStyle(
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
                   ],
                 ),
                 brokerData == null
@@ -139,6 +153,43 @@ class _DevicesListPageState extends State<DevicesListPage> {
           },
         );
       },
+    );
+  }
+
+  Widget chart(List<num> dataRaw) {
+    dataRaw = [10, 10.2, 10.9, 13.0, 13.1, 11.0, 8.3];
+    if (dataRaw.length == 1) {
+      dataRaw.add(dataRaw[0]);
+    }
+    final List<FlSpot> data = List.generate(dataRaw.length,
+        (index) => FlSpot(index.toDouble(), dataRaw[index].toDouble()));
+
+    return Container(
+      height: 100,
+      child: LineChart(
+        LineChartData(
+          lineTouchData: LineTouchData(
+            touchTooltipData: LineTouchTooltipData(
+              tooltipBgColor: Colors.white.withOpacity(0.8),
+            ),
+          ),
+          titlesData: FlTitlesData(
+            bottomTitles: AxisTitles(),
+            topTitles: AxisTitles(),
+            rightTitles: AxisTitles(),
+          ),
+          borderData: FlBorderData(show: false),
+          gridData: FlGridData(show: true),
+          lineBarsData: [
+            LineChartBarData(
+              spots: data,
+              isCurved: true,
+              isStrokeCapRound: true,
+              dotData: FlDotData(show: false),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

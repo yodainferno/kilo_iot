@@ -15,8 +15,6 @@ class DeviceInfoPage extends StatelessWidget {
     DevicesListStorage devicesListStorage =
         Provider.of<DevicesListStorage>(context, listen: false);
 
-    print(devicesListStorage.currentDevice);
-
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
